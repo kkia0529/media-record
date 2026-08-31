@@ -1,0 +1,964 @@
+/* ==========================================================
+   詳細與編輯介面專屬樣式 (detail.css) - 高度修正版
+   ========================================================== */
+
+body.detail-body {
+  background-color: #d6d0c4;
+  margin: 0;
+  display: flex;
+  height: 100vh;
+  box-sizing: border-box;
+  font-family: 'sourcehan', sans-serif;
+  overflow: hidden;
+}
+
+/* 主內容區容器 */
+.detail-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 60px;
+  box-sizing: border-box;
+  position: relative;
+  height: 100vh;
+}
+
+/* 狀態主面板（灰色大底框） */
+.detail-panel {
+  background-image: url('assets/detailUI/detail_BG.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid #c7bcab;
+  width: 100%;
+  height: 820px;
+  box-sizing: border-box;
+  padding: 30px 40px;
+  position: relative;
+  margin-top: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* 加上柔和陰影 */
+  animation: fadeInUp 0.6s ease-out forwards; /* 載入微上浮動態 */
+}
+
+/* === 各分類專屬背景切換 === */
+.detail-panel.bg-novel {
+  background-image: url('assets/detailUI/detail_BG_novel.png');
+}
+
+.detail-panel.bg-video {
+  background-image: url('assets/detailUI/detail_BG_video.png');
+}
+
+.detail-panel.bg-comic {
+  background-image: url('assets/detailUI/detail_BG_comic.png');
+}
+
+.detail-panel.bg-game {
+  background-image: url('assets/detailUI/detail_BG_game.png');
+}
+
+/* 定義上浮動態關鍵影格 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px); /* 從下方 20px 浮上來 */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 上方操作列：前往閱讀與編輯按鈕 */
+.panel-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* 前往閱讀與編輯圖示的外部容器（設定為相對定位，讓圓形ICON可以疊在上方） */
+.read-btn-container {
+  position: relative;
+  display: inline-block;
+  width: 131px;  /* 配合你的「前往跳轉」圖片寬度 */
+  height: 36px;  /* 配合你的「前往跳轉」圖片高度 */
+}
+
+/* 「前往跳轉」按鈕本體 */
+.read-btn-group {
+  display: block;
+  width: 100%;
+  height: 40px;
+  background-image: url('assets/detailUI/detail_goBTN.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-decoration: none;
+  cursor: pointer;
+  /* 讓位移與陰影變化有平滑的過渡動畫 */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* 滑鼠移上去時：往上浮動並產生立體陰影 */
+.read-btn-group:hover {
+  transform: translateY(-3px); /* 往上浮動 3 像素 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加底部陰影製造浮起感 */
+}
+
+
+
+/* 預設狀態：檢視模式，顯示「編輯」按鈕圖片 */
+.action-toggle-btn {
+  width: 110px;
+  height: 40px;
+  background-image: url('assets/detailUI/detail_editBTN.png');
+  background-size: cover;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  color: transparent; /* 隱藏純文字，僅顯示圖片 */
+  transition: transform 0.2s ease;
+}
+
+/* 進入編輯模式時：自動切換為「完成」按鈕圖片 */
+body.edit-state .action-toggle-btn {
+  background-image: url('assets/detailUI/detail_editfinishBTN.png');
+}
+
+.action-toggle-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+/* 進行中按鈕基礎樣式 */
+.ongoing-btn {
+  width: 21px;  /* 請依你的圖片實際比例調整寬高 */
+  height: 31px;
+  background-image: url('assets/detailUI/detail_ongoingBTN_0.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: transform 0.2s ease;
+}
+
+.ongoing-btn:hover {
+  transform: scale(1.08);
+}
+
+/* 當狀態為「進行中」時套用實心圖標 */
+.ongoing-btn.active {
+  background-image: url('assets/detailUI/detail_ongoingBTN_1.png');
+}
+
+
+/* 內容三欄佈局 */
+.panel-content-grid {
+  display: grid;
+  grid-template-columns: 180px 380px 1fr;
+  gap: 70px;
+  align-items: start;
+  padding-top: 20px;
+}
+
+/* 左側直欄 */
+.left-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+/* 封面方塊基礎設定 */
+.cover-placeholder {
+  width: 150px;
+  height: 210px;
+  background-image: url('assets/detailUI/detail_nophoto.png');
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b634d;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  
+  /* --- 新增 3D 視覺轉換平滑度 --- */
+  transform-style: preserve-3d;
+  transition: transform 0.1s linear, filter 0.1s linear;
+  cursor: pointer;
+}
+
+.star-rating {
+  font-size: 24px;
+  color: #829670;
+  letter-spacing: 4px;
+
+  /* 禁止使用者選取文字 */
+  -webkit-user-select: none; /* Safari / Chrome */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE / Edge */
+  user-select: none;         /* 標準語法 */
+  
+  /* 讓滑鼠懸浮時呈現點擊指標，並避免雙擊選取 */
+  cursor: pointer;
+}
+
+.info-item-left {
+  font-size: 18px;
+  color: #5e613e;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* 左側進度與狀態向下與分類間隔開來 */
+.status-group-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+  margin-top: 35px; 
+}
+
+.category-tag {
+  background-color: #d4c7a3b8;
+  
+  padding: 2px 20px;
+  margin-left: 5px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+/* 讓左側編輯狀態下的下拉選單外型與右側一致 */
+.left-column .edit-select {
+  width: 120px !important;
+  margin-left: 5px;
+  height: 28px !important;
+  font-size: 15px !important;
+}
+
+/* 中間與右側直欄 */
+.middle-column, .right-column-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 鎖死大小的基本信息框 */
+.fixed-info-box {
+  background-image: url('assets/detailUI/detail_infoBG.png');
+  background-size: cover;
+  padding: 18px 20px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 165px;
+  box-sizing: border-box;
+  margin-bottom: 20px; /* 額外往下推開 */
+}
+
+.info-row {
+  font-size: 18px;
+  color: #3d4121;
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+/* 日期區塊專屬外框 */
+.date-box-panel {
+  background-image: url('assets/detailUI/detail_dateBG.png');
+  background-size: cover;
+  padding: 14px 20px;
+  border-radius: 4px;
+  margin-bottom: 19px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90px; /* 鎖死日期方塊高度 */
+  box-sizing: border-box;
+  gap: 8px; /* 控制開始日期與完成日期兩行之間的上下距離 */
+}
+
+/* 藍圈部分：日期區塊左右間距設定 */
+.date-row {
+  display: flex;
+  align-items: center;
+}
+
+.date-title {
+  margin-right: 10px; /* 數字越大，日期標題跟右側內容的距離就越寬！ */
+}
+
+/* 簡介、備註、心得的共用容器設定 */
+.fixed-text-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 所有區塊標題（包含標籤、簡介、備註、心得）統一為深色字體、18px、粗體 */
+.text-block-label {
+  font-size: 18px;
+  color: #3d4121;
+  font-weight: bold;
+}
+
+/* 讓簡介、備註、心得的輸入框/顯示框高度完全一致（135px），自然對齊 */
+.fixed-text-box .text-box-display,
+.fixed-text-box .edit-textarea {
+  background-color: #f0ead7;
+  border: 1px solid #e0cda3;
+  height: 135px !important;
+  padding: 10px 15px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #4a4235;
+  width: 100%;
+  resize: none;
+}
+
+/* 標籤區塊與方塊樣式放大 */
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 38px; /* 設定最小高度確保排版整齊 */
+  margin-bottom: 59px; /* 調整推開備註區塊的距離 */
+}
+
+/* 標籤基礎顆粒樣式 */
+.tag-pill {
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 10px;
+  display: inline-block;
+  user-select: none;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+
+  /* === 新增：默認邊線 === */
+  border: 2px solid rgba(79, 80, 70, 0.111); /* 帶有質感的深色半透明外框 */
+  box-sizing: border-box; /* 確保邊框不影響元件大小計算 */
+}
+
+/* 編輯狀態下，上方已選標籤可點擊刪除的視覺 */
+body.edit-state .tag-pill.removable {
+  cursor: pointer;
+}
+body.edit-state .tag-pill.removable:hover {
+  transform: scale(1.05);
+  opacity: 0.8;
+}
+
+.right-column-sections .text-block-group:first-child {
+  position: relative;
+}
+
+/* 下方藍圈彈窗面板 (套用素材 detail_tagBG.jpg) */
+.tag-picker-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 365px;
+  background-image: url('assets/detailUI/detail_tagBG.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  padding: 20px 25px 15px 25px;
+  box-sizing: border-box;
+  z-index: 100;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  flex-direction: column;
+  justify-content: space-between;
+  animation: fadeInUp 0.3s ease-out forwards; 
+}
+
+/* 僅在帶有 active 類別且處於編輯狀態時顯示 */
+body.edit-state .tag-picker-panel.active {
+  display: flex !important;
+}
+
+/* 上半部：紅圈標籤排列區（支援滾輪） */
+.tag-picker-scroll-area {
+  flex: 1;
+  max-height: 270px; /* 固定高度超出時出現滾輪 */
+  overflow-y: scroll; /* 原為 auto，改為 scroll 即可常駐顯示滾輪軌道 */
+  padding-right: 8px;
+  padding-left: 5px;
+  margin-bottom: 10px;
+}
+
+/* 1. 滾動條整體寬度 */
+.tag-picker-scroll-area::-webkit-scrollbar {
+  width: 10px; /* 滾條寬度 */
+}
+
+/* 2. 滾條軌道背景 (Track) */
+.tag-picker-scroll-area::-webkit-scrollbar-track {
+  background: rgba(170, 157, 122, 0.596); /* 搭配介面風格的底色 */
+  border-radius: 4px;
+}
+
+/* 3. 滑塊本體 (Thumb) - 長度會依據內容多少動態變化 */
+.tag-picker-scroll-area::-webkit-scrollbar-thumb {
+  background: #e4dabe; /* 滑塊顏色 */
+  border-radius: 4px;
+}
+
+/* 4. 滑鼠懸浮在滑塊上的顏色 */
+.tag-picker-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: #91a17d;
+}
+
+/* 面板內標籤排列容器 */
+.tag-picker-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+/* 下半部：按鈕操作列 */
+.tag-picker-bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 45px;
+  border-top: 1px solid rgba(199, 188, 171, 0.4); /* 輕微分隔線 */
+  padding-top: 5px;
+}
+
+.tag-picker-right-btns {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* 彈窗按鈕基礎樣式 */
+.tag-picker-btn {
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.tag-picker-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.tag-picker-btn:active {
+  transform: translateY(0);
+}
+
+/* 三個按鈕圖片套用 */
+.tag-btn-goedit {
+  width: 95px;
+  height: 32px;
+  background-image: url('assets/detailUI/detail_tagBG_goedit.png');
+}
+
+.tag-btn-cancel {
+  width: 80px;
+  height: 32px;
+  background-image: url('assets/detailUI/detail_tagBG_cancel.png');
+}
+
+.tag-btn-confirm {
+  width: 150px;
+  height: 32px;
+  background-image: url('assets/detailUI/detail_tagBG_finish.png');
+}
+
+.picker-tag-item {
+  cursor: pointer;
+  opacity: 0.8; /* 未選中時半透明 */
+}
+
+.picker-tag-item:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* 被選中的標籤高亮不透明，並加立體邊框 */
+.picker-tag-item.selected {
+  opacity: 1;
+  box-shadow: 0 0 0 1px #fefff6af;
+}
+
+/* 獨立將刪除按鈕對齊至左下角「前往閱讀」下方 */
+.delete-btn {
+  position: absolute;
+  left: 40px;
+  bottom: 33px;
+  width: 80px;
+  height: 35px;
+  background-image: url('assets/detailUI/detail_deleteBTN.png');
+  background-size: contain;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  color: #3d4121;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.delete-btn:hover {
+  transform: translateY(-3px); /* 往上浮動 3 像素 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加底部陰影製造浮起感 */
+}
+
+/* ==========================================================
+   刪除彈窗 Modal 樣式
+   ========================================================== */
+.delete-modal-container {
+  position: relative;
+  width: 376px;
+  height: 138px;
+  background-image: url('assets/detailUI/detail_deleteBG.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px 25px 30px;
+  box-sizing: border-box;
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+
+
+.delete-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  width: 100%;
+}
+
+.delete-modal-btn {
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.delete-modal-btn:hover {
+  transform: scale(1.06);
+  filter: brightness(1.05);
+}
+
+.delete-modal-btn:active {
+  transform: scale(0.96);
+}
+
+/* 取消與確認按鈕圖檔 */
+.delete-btn-cancel {
+  width: 200px;
+  height: 40px;
+  background-image: url('assets/detailUI/detail_delete_cancel.png');
+}
+
+.delete-btn-confirm {
+  width: 200px;
+  height: 40px;
+  background-image: url('assets/detailUI/detail_delete_enter.png');
+}
+
+
+/* ==========================================================
+   狀態切換核心控制
+   ========================================================== */
+.edit-only {
+  display: none !important;
+}
+.view-only {
+  display: inline-block !important;
+}
+
+body.edit-state .view-only {
+  display: none !important;
+}
+body.edit-state .edit-only {
+  display: inline-block !important;
+}
+
+.edit-input, .edit-select, .edit-textarea {
+  background-color: #f3eddc;
+  border: 1px solid #d2bf9d;
+  padding: 4px 8px;
+  height: 26px;     /* 設定固定高度讓輸入框變矮 */
+  font-family: 'sourcehan', sans-serif;
+  font-size: 16px;
+  color: #4a4235;
+  box-sizing: border-box;
+}
+
+/* 專門調整下拉選單的高度，避免文字超出框框 */
+.edit-select {
+  background-color: #f3eddc;
+  border: 1px solid #d2bf9d;
+  padding: 2px 8px;
+  height: 30px !important; /* 增加高度容納文字 */
+  font-family: 'sourcehan', sans-serif;
+  font-size: 16px;
+  color: #4a4235;
+  box-sizing: border-box;
+}
+
+/* 編輯模式下，封面方塊出現 hover 指標 */
+body.edit-state .cover-placeholder {
+  cursor: pointer;
+}
+
+/* 編輯模式下 hover 時，將背景圖替換為素材圖 */
+body.edit-state .cover-placeholder:hover {
+  background-image: url('assets/detailUI/detail_upphoto.png') !important;
+}
+
+/* 自訂右鍵功能選單樣式 */
+.custom-context-menu {
+  display: none;
+  position: absolute;
+  z-index: 3000;
+  background-color: #f3eddc;
+  border: 1px solid #c7bcab;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 5px 0;
+  width: 160px;
+  font-size: 14px;
+}
+
+.custom-context-menu .menu-item {
+  padding: 8px 15px;
+  color: #3d4121;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.custom-context-menu .menu-item:hover {
+  background-color: #e2d9c5;
+}
+
+.custom-context-menu .menu-item.danger {
+  color: #904545;
+  border-top: 1px solid #e0cda3;
+}
+
+.custom-context-menu .menu-item.danger:hover {
+  background-color: #cebfa4;
+}
+
+/* URL Modal 遮罩 (全螢幕居中) */
+.url-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(2px);
+  transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+/* Modal 底圖容器與浮動陰影 */
+.url-modal-container {
+  position: relative;
+  width: 500px;
+  height: 120px;
+  background-image: url('assets/detailUI/detail_photoURLBG.png'); /*[cite: 31] */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 11px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.22); /*[cite: 31] */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  box-sizing: border-box;
+  animation: fadeInUp 0.6s ease-out forwards; /*[cite: 31] */
+}
+
+
+
+/* 跳轉網址彈窗底圖 (採用與圖片網址相同的彈窗尺寸與樣式) */
+.link-url-modal-bg {
+  background-image: url('assets/detailUI/detail_linkURLBG.png');
+}
+
+/* 右鍵選單與點擊微調 */
+.read-btn-group {
+  display: block;
+  width: 100%;
+  height: 40px;
+  background-image: url('assets/detailUI/detail_goBTN.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* 額外加上去的長條輸入框 (對齊示意圖位置) */
+.url-modal-input {
+  width: 96%;
+  margin: 0 auto 0 auto;
+  height: 25px;
+  border-radius: 10px;
+  border: 1px solid #c7beab;
+  background-color: #f5eedc;
+  padding: 0 10px;
+  font-size: 14px;
+  color: #3d4121;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.url-modal-input:focus {
+  border-color: #798753;
+  background-color: #f3eee2;
+}
+
+/* 按鈕區域配置 */
+.url-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-right: 14px;
+  padding-top: 10px;
+}
+
+/* 按鈕基礎樣式 (替換為素材圖) */
+.url-btn {
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+.ongoing-btn:hover {
+  transform: scale(1.08);
+}
+.url-btn:hover {
+  filter: brightness(1.05);
+  transform: scale(1.08);
+}
+
+.url-btn:active {
+  transform: scale(0.96);
+}
+
+/* 取消按鈕素材 */
+.url-btn-cancel {
+  width: 70px;
+  height: 28px;
+  background-image: url('assets/detailUI/detail_photoURL_cancel.png');
+}
+
+/* 確認按鈕素材 */
+.url-btn-confirm {
+  width: 120px;
+  height: 28px;
+  background-image: url('assets/detailUI/detail_photoURL_enter.png');
+}
+
+/* ==========================================================
+   大標籤管理彈窗 (Manage Tags Modal) - 需求專屬樣式
+   ========================================================== */
+.manage-tags-modal-container {
+  width: 950px;
+  height: 520px;
+  background-image: url('assets/detailUI/detail_tag_editBG.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  padding: 35px 45px 25px 45px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+/* 頂部分類選擇列 (藍圈 2 & 3) */
+.manage-tags-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 200px;
+}
+
+/* 修改上方大標籤管理彈窗與小選單內的分類選單圓角與外觀 */
+.manage-tags-top-bar select {
+  border-radius: 8px !important;  /* 設定輕微圓角 */
+  padding: 2px 10px !important;
+  background-color: #f3eddc !important;
+  border: 1px solid #c7beab !important;
+  color: #3d4121 !important;
+  outline: none;
+  font-size: 14px !important;
+  cursor: pointer;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.manage-tags-top-bar select:focus,
+.edit-only.edit-select.category-select:focus {
+  border-color: #798753 !important;
+}
+
+/* 中央標籤顯示區 (紅圈 1 - 支援滾輪) */
+.manage-tags-scroll-area {
+  flex: 1;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  overflow-y: scroll;
+  padding-right: 10px;
+  padding-top: 5px;
+  max-height: 310px;
+}
+
+.manage-tags-scroll-area::-webkit-scrollbar {
+  width: 8px;
+}
+.manage-tags-scroll-area::-webkit-scrollbar-track {
+  background: rgba(170, 157, 122, 0.3);
+  border-radius: 4px;
+}
+.manage-tags-scroll-area::-webkit-scrollbar-thumb {
+  background: #c5b99f;
+  border-radius: 4px;
+}
+.manage-tags-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: #829670;
+}
+
+.manage-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.manage-tag-item {
+  padding: 4px 16px;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.manage-tag-item:hover {
+  transform: translateY(-2px);
+}
+
+.manage-tag-item.selected {
+  outline: 2px solid #5e613e;
+  box-shadow: 0 0 8px rgba(94, 97, 62, 0.5);
+}
+
+/* 下方新增/編輯控制列 (藍圈 4) */
+.manage-tags-bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 55px;
+  padding-top: 10px;
+  padding-left: 100px;
+}
+
+.manage-tags-edit-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.color-picker-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: transform 0.15s ease;
+}
+
+.color-dot:hover {
+  transform: scale(1.15);
+}
+
+.color-dot.active {
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #5e613e;
+}
+
+/* 按鈕圖檔配置 (素材圖檔 detail_tag_edit_addBTN_2 & detail_tag_edit_enterBTN_2) */
+.tag-confirm-btn {
+  width: 65px;
+  height: 32px;
+  border: none;
+  background-color: transparent;
+  background-image: url('assets/detailUI/detail_tag_edit_addBTN.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: transform 0.15s ease;
+}
+
+.tag-confirm-btn.edit-mode {
+  background-image: url('assets/detailUI/detail_tag_edit_addBTN.png');
+}
+
+.tag-confirm-btn:hover, .tag-finish-btn:hover {
+  transform: scale(1.05);
+}
+
+.tag-finish-btn {
+  width: 120px;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  background-image: url('assets/detailUI/detail_tag_edit_enterBTN.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+

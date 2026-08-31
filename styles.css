@@ -1,0 +1,587 @@
+/* ==========================================================
+   字型宣告：Source Han Serif SC
+   ========================================================== */
+@font-face {
+  font-family: 'sourcehan';
+  src: url('/assets/fonts/SourceHanSerifSC-SemiBold.woff2') format('woff2'),
+       url('/assets/fonts/SourceHanSerifSC-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'sourcehan';
+  src: url('/assets/fonts/SourceHanSerifSC-Bold.woff2') format('woff2'),
+       url('/assets/fonts/SourceHanSerifSC-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+/* === 全域與背景設定 === */
+body {
+  font-family: 'sourcehan', sans-serif;
+  -webkit-font-smoothing: antialiased;    /* 讓字型邊緣平滑，減少載入時的粗細跳動 */
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('assets/mainUI/main_BG.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: #ffffff;
+
+}
+
+/* 設定整個畫面的基準設計大小 (例如 1200 x 800) */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden; 
+  background-color: #2b2b2b; 
+}
+
+.app-container {
+  width: 1920px;
+  height: 1080px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  /* JS 會動態修改 transform 屬性，這裡先留空或只寫 translate */
+  transform: translate(-50%, -50%);
+  transform-style: flat !important;
+}
+
+
+/* 主畫面整體佈局容器：大幅增加四周留白與區塊間距 */
+.main-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 110px 70px; /* 保留你原本想要的四周留白邊距 */
+  box-sizing: border-box;
+  
+  /* 改用絕對定位或維持區塊佈局，讓內部好掌控 */
+  position: relative; 
+  display: flex;
+  flex-direction: column;
+  gap: 100px; /* 上下半部之間的距離 */
+}
+
+/* === 上半部區域 === */
+.top-section {
+  display: flex;
+  gap: 32px;         /* 各區塊之間的間距 */
+  width: 100%;       /* 佔滿容器寬度 */
+  height: 200px;     /* 固定高度 */
+  box-sizing: border-box;
+}
+
+/* 1. 資料轉移按鈕/區塊 */
+.data-transfer-card {
+  width: 94px;      
+  height: 250px;     
+  background-color: transparent; 
+
+  /* 載入你的按鈕圖片 */
+  background-image: url('assets/mainUI/main_BTN_datatran.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border-radius: 0;     
+  text-decoration: none; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 保留原本平順的過渡動畫 */
+  transition: transform 0.2s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.2s ease;
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  will-change: transform;
+}
+
+/* 2. 個人媒體記錄標題區塊 */
+.profile-card {
+  width: 531px;      
+  height: 250px;     
+  background-color: transparent;
+  
+  /* 載入您剛剛做好的標題圖片 */
+  background-image: url('assets/mainUI/main_title.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  border-radius: 0;          /* 直角 */
+  padding: 0;                /* 移除內部留白，讓圖片完整填滿 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  /* 保留原本的 3D 傾斜與上浮特效 */
+  transition: transform 0.2s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.2s ease;
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  will-change: transform;
+}
+
+/* 3. 進行中列表區塊 */
+.ongoing-card {
+  width: 358px;
+  height: 250px;
+  background-color: transparent;
+  background-image: url('assets/mainUI/main_ongoing.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 0;
+  /* 調整這裡讓方塊往下移：數值越大，方塊位置越下方 */
+  padding-top: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 確保內部項目置中 */
+  box-sizing: border-box; /* 確保 padding 不會撐大外框 */
+  gap: 12px; 
+  
+  
+  /* 保留原本的 3D 傾斜與上浮特效 */
+  transition: transform 0.2s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.2s ease;
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  will-change: transform;
+}
+
+.ongoing-item {
+  width: 324px; /* 從 324px 稍微縮小，讓它剛好落在綠色背景框內 */
+  height: 30px;
+  background-color: #fcf5eb;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  font-size: 20px;
+  color: #687045;
+  text-decoration: none; 
+  display: flex;
+  align-items: center; 
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+/* 滑鼠移上去時的互動效果 */
+.ongoing-item:hover {
+  background-color: #e1d8c0;
+  transform: translateX(3px);
+}
+
+/* 快速新增區塊外框與背景 */
+.quick-add-card {
+  width: 665px;
+  height: 250px;
+  background-color: transparent;
+  background-image: url('assets/mainUI/main-quickadd.png'); /* 替換為你的快速新增底圖 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 0;
+  padding-top: 67px; /* 往下推開，讓輸入框對齊底圖橫條位置 */
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  gap: 10px; /* 各行輸入框之間的間距 */
+  color: #fcf5eb;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 1. 純文字輸入框（名稱、開始日期）：維持一般輸入框樣式，絕不出現箭頭 */
+.quick-add-card input[type="text"],
+.quick-add-card input {
+  width: 625px;
+  height: 32px;
+  background-color: #fcf5eb;
+  border: none;
+  border-radius: 7px;
+  padding: 0 12px; /* 左右維持相同內距，文字不會偏右 */
+  font-family: 'sourcehan', sans-serif;
+  font-size: 20px;
+  color: #687045;
+  box-sizing: border-box;
+  outline: none;
+}
+
+/* 2. 下拉選單專用（分類、細類）：才加上自訂箭頭與右側留白 */
+.quick-add-card select,
+.quick-add-row select {
+  height: 32px;
+  background-color: #fcf5eb;
+  border: none;
+  border-radius: 7px;
+  /* 右側留出 32px 給自訂箭頭，左側 12px */
+  padding: 0 32px 0 12px; 
+  font-family: 'sourcehan', sans-serif;
+  font-size: 20px;
+  color: #687045;
+  box-sizing: border-box;
+  outline: none;
+  cursor: pointer;
+
+  /* 清除瀏覽器預設樣式 */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* 只在 select 加上精緻的自訂下拉箭頭 */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23494c29' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center; 
+}
+
+/* 第二排：分類與細類（左右並排容器） */
+.quick-add-row {
+  width: 625px;
+  height: 33px;
+  display: flex;
+  gap: 12px; /* 兩個下拉選單之間的間距 */
+}
+
+/* 第二排的下拉選單平分寬度 */
+.quick-add-row select {
+  flex: 1; /* 讓分類與細類各佔一半空間 */
+  width: auto;
+  height: 33px;
+  background-color: #fcf5eb;
+  border: none;
+  border-radius: 7px;
+  padding: 0 12px;
+  font-family: 'sourcehan', sans-serif;
+  font-size: 20px;
+  color: #687045;
+  box-sizing: border-box;
+  outline: none;
+  cursor: pointer;
+}
+
+.quick-add-card select option,
+.quick-add-row select option {
+  font-size: 15px; 
+  color: #687045;
+  background-color: #fcf5eb;
+}
+
+/* 提示文字顏色（Placeholder） */
+.quick-add-card input::placeholder {
+  color: #9a9c8b;
+}
+
+/* 讓未選擇狀態下的 select 文字顯示淺色提示字 */
+.quick-add-card select:invalid,
+.quick-add-row select:invalid {
+  color: #9a9c8b; /* 淺色提示字顏色 */
+}
+
+/* 當使用者選擇了有效選項後，文字改回深色 */
+.quick-add-card select option,
+.quick-add-row select option {
+  color: #687045; 
+}
+
+
+
+/* 1. 確保最外層容器夠寬，容納 padding */
+.flatpickr-calendar {
+  width: 255px !important; /* 稍微加寬一點點容錯 */
+  background: #fcf5eb !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  font-family: 'sourcehan', sans-serif !important;
+  color: #494c29 !important;
+  padding: 10px !important;
+  box-sizing: content-box !important;
+}
+
+/* 2. 星期幾的區域，寬度要跟著對齊 */
+.flatpickr-weekdays {
+  width: 252px !important; /* 36px * 7 */
+  margin-left: auto;
+  margin-right: auto;
+  height: 24px !important;
+}
+
+span.flatpickr-weekday {
+  font-size: 12px !important;
+  color: #494c29 !important;
+  line-height: 24px !important;
+}
+
+/* 3. **關鍵修正**：日期數字區域 */
+.flatpickr-days {
+  width: 252px !important; /* 精確計算：7欄 * 36px 的格子寬度 */
+  margin-left: auto;
+  margin-right: auto;
+  outline: 1px solid transparent; /* 避免邊界溢出 */
+}
+
+/* 4. **關鍵修正**：承載日期的容器 */
+.dayContainer {
+  width: 252px !important;
+  min-width: 252px !important;
+  max-width: 252px !important;
+  box-sizing: border-box !important;
+  outline: 1px solid transparent;
+}
+
+/* 每一天格子的大小與字體（維持秀氣感） */
+.flatpickr-day {
+  width: 36px !important; /* 稍微加大一點點格子，確保擠得下又不失精緻 */
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+  margin: 0 !important; /* 重要：去除預設間距，靠精確計算排版 */
+  max-width: none !important;
+  border: 1px solid transparent; /* 防止邊框導致換行 */
+}
+
+/* 選中日期的顏色（保持你的復古綠色主題） */
+.flatpickr-day.selected, 
+.flatpickr-day.selected:hover {
+  background: #687045 !important;
+  border-color: #687045 !important;
+  color: #fcf5eb !important;
+}
+
+/* 調整上方月份與年份列的間距與字體 */
+.flatpickr-months {
+  padding: 2px 0 !important;
+}
+
+.flatpickr-current-month {
+  font-size: 14px !important;
+  padding-top: 0 !important;
+  width: auto !important;
+}
+
+/* 確認按鈕樣式（使用你的按鈕圖檔） */
+.quick-add-submit {
+  width: 168px; /* 依照你的按鈕素材比例調整 */
+  height: 40px;
+  background-color: transparent;
+  background-image: url('assets/mainUI/main-quickadd-enter.png'); /* 確認按鈕素材 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  align-self: flex-end; /* 靠右對齊 */
+  margin-top: 2px;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* 按鈕互動效果 */
+.quick-add-submit:hover {
+  transform: scale(1.02);
+  filter: brightness(1.05);
+}
+
+
+/* === 下半部區域 === */
+.bottom-section {
+  display: flex;
+  gap: 29px;          /* 增加下方各卡片之間的間距 */
+  flex: 1;
+}
+
+/* 四大分類卡片 (小說漫畫影視遊戲) */
+/* 1. 確保外層卡片是定位基準，並且統一定義卡片的寬高 */
+.category-card {
+  width: 360px;
+  height: 580px;
+  display: block;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+  perspective: 1000px; /* 確保 3D 空間感 */
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* 2. 第一層：最底部的底板 */
+.card-base-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 340px;
+  height: 100%;
+  background-image: var(--card-bg);
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
+/* 3. 第二層：把 Title 與 Cover 包在一起，統一浮在底板上方 */
+.card-floating-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none; /* 讓滑鼠事件能穿透到底層 */
+  
+  /* 關鍵：加深投影，讓底板與第二層產生視覺距離 */
+  filter: drop-shadow(0 2px 2px rgba(75, 75, 73, 0.2));
+  
+  /* 移除會干擾 JS 即時偏移的 transition，改用極短的平滑過渡或直接由 JS 控制 */
+  will-change: transform;
+}
+
+/* 第二層內部的標題圖片初始位置（帶點向左偏移的藝術感） */
+.card-title-img {
+  position: absolute;
+  top: 25px;
+  left: calc(50% - 10px); /* 讓它往左偏移 15px，製造像示意圖那樣的錯位 */
+  transform: translateX(-50%);
+  width: 356px;
+  height: auto;
+  display: block;
+}
+
+/* 第二層內部的封面內頁圖片初始位置（帶點向左偏移） */
+.card-cover-img {
+  position: absolute;
+  top: 140px;
+  left: calc(50% - 30px); /* 同樣往左偏移 15px，讓整層一起向左錯位 */
+  transform: translateX(-50%);
+  width: 327px;
+  height: auto;
+  display: block;
+}
+
+/* 右側：最近編輯 + 退出按鈕容器 */
+.right-sidebar-panel {
+  width: 190px;       /* 統一寬度 */
+  height: 100%;       /* 讓它直接撐滿下半部區域的高度，對齊其他大卡片 */
+  display: flex;
+  flex-direction: column;
+  gap: 32px;          /* 最近編輯與退出按鈕之間的距離 */
+}
+
+/* 最近編輯卡片 */
+.recent-edit-card {
+  width: 100%;
+  flex: 1;
+  
+  /* 底圖設定 */
+  background-image: url('assets/mainUI/main_recentedit.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #9ba37a;
+  
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  padding-top: 155px; 
+  padding-bottom: 30px;
+  box-sizing: border-box;
+  
+  /* 消除超連結預設的底線與顏色影響 */
+  text-decoration: none;
+  color: #494c29;
+  
+  /* 滑鼠懸停特效過渡 */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 滑鼠移到整張卡片上時的微幅浮起與陰影特效（增進按鈕感） */
+.recent-edit-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  color: #494c29; /* 保持字體顏色不變 */
+}
+
+/* 項目封面圖框 */
+.recent-edit-thumb {
+  width: 157px;          
+  height: 220px; 
+  background-image: url('assets/detailUI/detail_nophoto.png');
+  background-size: contain;
+  border: 1px solid rgba(73, 76, 41, 0.25);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 22px; 
+}
+
+.recent-edit-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 下方名稱文字區 */
+.recent-edit-title {
+  font-family: 'sourcehan', sans-serif;
+  font-size: 21px;
+  line-height: 1.5;
+  text-align: center;
+  color: #f0f2d5;
+  font-weight: 600;
+  
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding: 0 10px;
+}
+
+
+.quit-card {
+  width: 100%;       /* 佔滿右側面板的寬度 */
+  height: 65px;      /* 給它一個固定高度 */
+  background-color: transparent; 
+  background-image: url('assets/mainUI/main_BTN_quit.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 保留原本的過渡動畫 (如果有的話) */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+
+
+
+/* 當滑鼠移上去時，這三塊只做單純的往上浮起 */
+.data-transfer-card:hover,
+.profile-card:hover,
+.ongoing-card:hover,
+.quick-add-card:hover,
+.recent-edit-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+
+
+
+
+
+

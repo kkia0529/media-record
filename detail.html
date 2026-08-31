@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Media Record - 詳細/編輯介面</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="shelf.css">
+  <link rel="stylesheet" href="detail.css">
+  <!-- 引入 Flatpickr 日曆外掛的 CSS 與 JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="database.js" defer></script>
+  <script src="main.js" defer></script>
+</head>
+
+<body class="detail-body" id="pageBody">
+
+<!-- 左側固定導覽列 -->
+  <aside class="sub-sidebar">
+    <!-- 返回上一頁按鈕[cite: 13] -->
+    <div class="nav-icon-btn back-btn" onclick="history.back()" title="返回"></div> 
+
+    <!-- 小說大分類 (帶有展開/收合控制)[cite: 13] -->
+    <div class="nav-group" id="group-novel">
+      <!-- 替換成圖片 class 並移除文字 -->
+      <div class="nav-icon-btn sidebar-novel" onclick="toggleSubMenu('group-novel')" title="小說"></div>
+      <div class="sub-menu">
+        <a href="novel-01.html" class="sub-menu-item">原創</a>
+        <a href="novel-02.html" class="sub-menu-item">綜英美</a>
+        <a href="novel-03.html" class="sub-menu-item">衍生</a>
+        <a href="novel-04.html" class="sub-menu-item">其他</a>
+      </div>
+    </div>
+
+    <!-- 漫畫大分類[cite: 13] -->
+    <a href="comic.html" class="sub-menu-item">
+    <div class="nav-icon-btn sidebar-comic" onclick="toggleSubMenu('group-comic')" title="漫畫"></div>
+    </a>
+
+
+    <!-- 影視大分類[cite: 13] -->
+    <div class="nav-group" id="group-video">
+      <div class="nav-icon-btn sidebar-video" onclick="toggleSubMenu('group-video')" title="影視"></div>
+      <div class="sub-menu">
+        <a href="video01.html" class="sub-menu-item">動畫</a>
+        <a href="video02.html" class="sub-menu-item">電影</a>
+        <a href="video03.html" class="sub-menu-item">影集</a>
+        <a href="video04.html" class="sub-menu-item">其他</a>
+      </div>
+    </div>
+
+    <!-- 遊戲大分類[cite: 13] -->
+    <div class="nav-group" id="group-game">
+      <div class="nav-icon-btn sidebar-game" onclick="toggleSubMenu('group-game')" title="遊戲"></div>
+      <div class="sub-menu">
+        <a href="game01.html" class="sub-menu-item">實況</a>
+        <a href="game02.html" class="sub-menu-item">遊玩</a>
+        <a href="game03.html" class="sub-menu-item">解謎</a>
+        <a href="game04.html" class="sub-menu-item">其他</a>
+      </div>
+    </div>
+
+    <!-- HOME 按鈕[cite: 13] -->
+    <div class="nav-icon-btn home-btn" onclick="location.href='index.html'" title="首頁"></div>
+  </aside>
+
+  <!-- 右側主要內容區 -->
+  <main class="detail-main">
+    
+    <div class="detail-panel">
+      
+      <!-- 上方列：前往閱讀、進行中按鈕 & 編輯/完成按鈕 -->
+      <div class="panel-top-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="read-btn-container">
+            <a href="#" class="read-btn-group" title="前往跳轉"></a>
+          </div>
+          <!-- 新增的進行中按鈕 (空心圖標為預設) -->
+          <div class="ongoing-btn" id="ongoingBtn" title="設為進行中" onclick="toggleOngoingStatus()"></div>
+        </div>
+        <button class="action-toggle-btn" id="actionToggleBtn" onclick="toggleEditMode()"></button>
+      </div>
+
+      <!-- 內容區三欄網格 -->
+      <div class="panel-content-grid">
+        
+      <!-- 第 1 欄：左側 (封面、評分、分類、進度狀態) -->
+      <div class="left-column">
+        <div class="cover-placeholder" id="coverBox"></div>
+        <div class="star-rating" style="font-size: 24px; letter-spacing: 4px;">☆☆☆☆☆</div>
+
+        <!-- 分類 (支援檢視文字與編輯下拉選單) -->
+        <div class="info-item-left">
+          分類：
+          <span class="view-only category-tag" id="categoryText">原創</span>
+          <select class="edit-only edit-select category-select" id="editCategorySelect">
+            <option value="原創">原創</option>
+            <option value="綜英美">綜英美</option>
+            <option value="衍生">衍生</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+
+        <div class="status-group-vertical">
+          <!-- 進度 (支援檢視文字與編輯下拉選單) -->
+          <div class="info-item-left">
+            進度：
+            <span class="view-only category-tag" id="progressText">已完結</span>
+            <select class="edit-only edit-select progress-select" id="editProgressSelect">
+              <!-- 會由 JS 自動從 mediaOptionsConfig 讀取填入 -->
+            </select>
+          </div>
+          
+          <!-- 狀態 (支援檢視文字與編輯下拉選單) -->
+          <div class="info-item-left">
+            狀態：
+            <span class="view-only category-tag" id="statusText">已讀完</span>
+            <select class="edit-only edit-select status-select" id="editStatusSelect">
+              <!-- 會由 JS 自動從 mediaOptionsConfig 讀取填入 -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+        <!-- 第 2 欄：中間 (基本資訊、日期區塊、靠下對齊的簡介) -->
+        <div class="middle-column">
+          <div class="fixed-info-box">
+            <div class="info-row">
+              書名：
+              <span class="view-only">書籍名稱</span>
+              <input type="text" class="edit-only edit-input" placeholder="輸入書名" style="width: 280px;">
+            </div>
+
+            <div class="info-row">
+              作者：
+              <span class="view-only">作者名稱</span>
+              <input type="text" class="edit-only edit-input" placeholder="輸入作者" style="width: 280px;">
+            </div>
+
+            <div class="info-row">
+              性向：
+              <span class="view-only" id="genderText">無CP</span>
+              <select class="edit-only edit-select" id="editGenderSelect">
+                <!-- 會由 JS 自動從 mediaOptionsConfig 讀取填入 -->
+              </select>
+            </div>
+          </div>
+
+          <!-- 日期區塊（已拆分 span 結構以支援 CSS 獨立調整間距與日曆選取） -->
+          <div class="date-box-panel" id="dateBlock">
+            <div id="startDateRow" class="date-row" style="margin-bottom: 5px; color: #3d4121;">
+              <span class="date-title">開始日期：</span>
+              <span class="view-only" id="startDateText">2026/12/29</span>
+              <input type="text" id="startDateInput" class="edit-only edit-input" placeholder="選擇日期" autocomplete="off" style="width: 140px;">
+            </div>
+            <div id="completeDateRow" class="date-row" style="color: #3d4121;">
+              <span class="date-title">完成日期：</span>
+              <span class="view-only" id="completeDateText">2026/12/30</span>
+              <input type="text" id="completeDateInput" class="edit-only edit-input" placeholder="選擇日期" autocomplete="off" style="width: 140px;">
+            </div>
+          </div>
+
+          <div class="text-block-group fixed-text-box bottom-align-box">
+            <div class="text-block-label">簡介</div>
+            <div class="text-box-display view-only" ></div>
+            <textarea class="edit-only edit-textarea" ></textarea>
+          </div>
+        </div>
+
+        <!-- 第 3 欄：右側 (統一深色標題的標籤、靠下對齊的備註、心得) -->
+        <div class="right-column-sections">
+
+          <div class="text-block-group">
+            <div class="text-block-label">標籤</div>
+            <!-- 上方紅圈處（已選標籤顯示區） -->
+            <div class="tags-container" id="selectedTagsContainer" style="margin-top: 5px;">
+              <!-- JS 會自動渲染出可點擊取消的 tag-pill -->
+            </div>
+
+            <!-- 下方標籤選擇彈窗面板 -->
+            <div id="tagPickerPanel" class="tag-picker-panel">
+              <!-- 上半部：可滾動的標籤選擇區 (紅圈區域) -->
+              <div class="tag-picker-scroll-area">
+                <div class="tag-picker-content" id="availableTagsContainer">
+                  <!-- 呈現該分類下所有可選取的標籤 -->
+                </div>
+              </div>
+
+              <!-- 下半部：操作按鈕列 -->
+              <div class="tag-picker-bottom-bar">
+                <!-- 左側：前往編輯大彈窗按鈕 -->
+                <button type="button" class="tag-picker-btn tag-btn-goedit" id="btnTagGoEdit" title="前往編輯"></button>
+
+                <!-- 右側：取消與確認按鈕 -->
+                <div class="tag-picker-right-btns">
+                  <button type="button" class="tag-picker-btn tag-btn-cancel" id="btnTagCancel" title="取消修改"></button>
+                  <button type="button" class="tag-picker-btn tag-btn-confirm" id="btnTagConfirm" title="儲存修改"></button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="text-block-group fixed-text-box bottom-align-box">
+            <div class="text-block-label">備註</div>
+            <div class="text-box-display view-only"></div>
+            <textarea class="edit-only edit-textarea"></textarea>
+          </div>
+
+          <div class="text-block-group fixed-text-box bottom-align-box">
+            <div class="text-block-label">心得</div>
+            <div class="text-box-display view-only"></div>
+            <textarea class="edit-only edit-textarea"></textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 獨立移到最左下角的刪除按鈕 -->
+      <button class="delete-btn" id="deleteBtn"></button>
+
+
+
+    </div>
+    
+  </main>
+
+  <!-- 自訂右鍵選單 (封面與跳轉按鈕共用) -->
+  <div id="coverContextMenu" class="custom-context-menu">
+    <div class="menu-item" id="btnMenuUrl">圖片網址 (URL)</div>
+    <div class="menu-item danger" id="btnMenuDelete">刪除圖片</div>
+  </div>
+
+  <!-- 新增：跳轉按鈕專用的右鍵選單 -->
+  <div id="linkContextMenu" class="custom-context-menu">
+    <div class="menu-item" id="btnMenuLinkUrl">編輯網址</div>
+    <div class="menu-item danger" id="btnMenuLinkDelete">清除網址</div>
+  </div>
+
+<!-- 封面圖片 URL 彈窗 Modal -->
+  <div id="urlModalOverlay" class="url-modal-overlay">
+    <div class="url-modal-container">
+      <input type="text" id="urlModalInput" class="url-modal-input" placeholder="請貼上圖片網址" autocomplete="off">
+      <div class="url-modal-actions">
+        <button type="button" id="btnUrlCancel" class="url-btn url-btn-cancel"></button>
+        <button type="button" id="btnUrlConfirm" class="url-btn url-btn-confirm"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增：跳轉按鈕專用 URL 彈窗 Modal (採用相同的 class 樣式與 detail_linkURLBG.png 素材) -->
+  <div id="linkUrlModalOverlay" class="url-modal-overlay">
+    <div class="url-modal-container link-url-modal-bg">
+      <input type="text" id="linkUrlModalInput" class="url-modal-input" placeholder="請貼上跳轉網址 (如 https://...)" autocomplete="off">
+      <div class="url-modal-actions">
+        <button type="button" id="btnLinkUrlCancel" class="url-btn url-btn-cancel"></button>
+        <button type="button" id="btnLinkUrlConfirm" class="url-btn url-btn-confirm"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 刪除確認彈窗 Modal -->
+<div id="deleteModalOverlay" class="url-modal-overlay">
+  <div class="delete-modal-container">
+    <div class="delete-modal-title"></div>
+    <div class="delete-modal-actions">
+      <button type="button" id="btnDeleteCancel" class="delete-modal-btn delete-btn-cancel" title="取消"></button>
+      <button type="button" id="btnDeleteConfirm" class="delete-modal-btn delete-btn-confirm" title="確認"></button>
+    </div>
+  </div>
+</div>
+
+  <!-- 單獨標籤右鍵選單 (需求 5) -->
+  <div id="manageTagContextMenu" class="custom-context-menu">
+    <div class="menu-item danger" id="btnManageMenuDeleteTag">刪除標籤</div>
+  </div>
+
+
+
+<!-- 大標籤管理彈窗 Modal (需求 1~6) -->
+  <div id="manageTagsModalOverlay" class="url-modal-overlay">
+    <div class="manage-tags-modal-container">
+      
+      <!-- 頂部藍圈：兩個分類下拉選擇框 (需求 3) -->
+      <div class="manage-tags-top-bar">
+        <span style="font-size: 16px; color: #3d4121; font-weight: bold;">當前分類</span>
+        <select id="manageMainCategorySelect" class="edit-select" style="width: 120px;"></select>
+        <select id="manageSubCategorySelect" class="edit-select" style="width: 120px;"></select>
+      </div>
+
+      <!-- 紅圈處：標籤排列區 (需求 1) -->
+      <div class="manage-tags-scroll-area">
+        <div id="manageTagsListContainer" class="manage-tags-list"></div>
+      </div>
+
+      <!-- 下方操作列：新增/編輯與完成按鈕 (需求 4 & 6) -->
+      <div class="manage-tags-bottom-bar">
+        <div class="manage-tags-edit-group">
+          <span style="font-size: 15px; color: #3d4121; font-weight: bold;">名稱</span>
+          <input type="text" id="manageTagNameInput" class="edit-input" style="width: 140px; border-radius: 12px;">
+          <span style="font-size: 15px; color: #3d4121; font-weight: bold; margin-left: 8px;">顏色</span>
+
+          <div class="color-picker-dots" id="colorPickerDots">
+            <span class="color-dot active" data-color="c1" style="background-color: #b6b4b2;"></span>
+            <span class="color-dot" data-color="c2" style="background-color: #96b59a;"></span>
+            <span class="color-dot" data-color="c3" style="background-color: #d69d9d;"></span>
+            <span class="color-dot" data-color="c4" style="background-color: #93aecb;"></span>
+            <span class="color-dot" data-color="c5" style="background-color: #d8c68b;"></span>
+          </div>
+          
+          <button type="button" id="btnManageTagConfirm" class="tag-confirm-btn" title="確認"></button>
+        </div>
+
+        <button type="button" id="btnManageTagsSaveClose" class="tag-finish-btn" title="完成"></button>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+// 全域變數定義
+let currentRating = 0;
+let currentBookTags = [];      // 最終已確認的標籤
+let tempSelectedTags = [];     // 彈窗開啟時的臨時標籤快照（用於取消時還原）
+
+// 大彈窗專用暫存變數
+let manageTagsTemp = {};        // 深拷貝資料庫標籤庫
+let selectedTagIndex = null;   // 目前選中的標籤 Index (null 代表新增模式)
+let selectedColorKey = 'c1';    // 目前選中的顏色 key
+let contextMenuTargetIndex = null; // 右鍵欲刪除的標籤 index
+
+// 動態根據大分類初始化詳細頁面的分類下拉選項
+function initCategoryOptions(mainCategory) {
+  const categorySelect = document.getElementById('editCategorySelect');
+  if (!categorySelect || typeof mediaOptionsConfig === 'undefined') return;
+
+  const config = mediaOptionsConfig[mainCategory];
+  if (config && config.types) {
+    categorySelect.innerHTML = config.types.map(t => `<option value="${t}">${t}</option>`).join('');
+  }
+}
+
+// 取得當前大分類與細類組合的 key
+function getFullCategoryKey() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const mainCatKey = urlParams.get('category') || 'novel';
+
+  const mainCatMap = {
+    novel: "小說",
+    comic: "漫畫",
+    video: "影視",
+    game: "遊戲"
+  };
+
+  const mainCatName = mainCatMap[mainCatKey] || "小說";
+
+  // 漫畫沒有細類，統一固定讀取 '漫畫_漫畫'
+  if (mainCatKey === 'comic') {
+    return '漫畫_漫畫';
+  }
+
+  const categorySelect = document.getElementById('editCategorySelect');
+  const subCategory = categorySelect?.value || urlParams.get('sub') || '';
+
+  return subCategory ? `${mainCatName}_${subCategory}` : `${mainCatName}_${mainCatName}`;
+}
+
+// 2. 採用跟書架篩選一樣的雙重讀取邏輯 (tagDatabase + bookDatabase)
+function renderAvailablePickerTags() {
+  const container = document.getElementById('availableTagsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const currentKey = getFullCategoryKey();
+  const urlParams = new URLSearchParams(window.location.search);
+  const mainCatKey = urlParams.get('category') || 'novel';
+
+  const uniqueTagsMap = new Map();
+
+  // A. 從 tagDatabase 讀取預設標籤
+  if (typeof tagDatabase !== 'undefined' && tagDatabase[currentKey]) {
+    tagDatabase[currentKey].forEach(tag => {
+      const tagName = typeof tag === 'string' ? tag : (tag ? tag.name : null);
+      const tagColor = (typeof tag === 'object' && tag.color) ? tag.color : 'c1';
+      if (tagName) {
+        uniqueTagsMap.set(tagName, { name: tagName, color: tagColor });
+      }
+    });
+  }
+
+  // B. 同步書架篩選邏輯：從 bookDatabase 撈取該大類已使用的所有標籤，補足未在 tagDatabase 的標籤
+  if (typeof bookDatabase !== 'undefined') {
+    bookDatabase.forEach(book => {
+      if (book.category === mainCatKey && Array.isArray(book.tags)) {
+        book.tags.forEach(tag => {
+          const tagName = typeof tag === 'string' ? tag : (tag ? tag.name : null);
+          if (tagName && !uniqueTagsMap.has(tagName)) {
+            uniqueTagsMap.set(tagName, { name: tagName, color: 'c1' });
+          }
+        });
+      }
+    });
+  }
+
+  const pool = Array.from(uniqueTagsMap.values());
+  const sortedPool = (typeof sortTags === 'function') ? sortTags(pool) : pool;
+
+  sortedPool.forEach(tag => {
+    const colorKey = tag.color || 'c1';
+    const colorConfig = (typeof TAG_COLORS !== 'undefined' && TAG_COLORS[colorKey]) 
+      ? TAG_COLORS[colorKey] 
+      : { bg: "#b5aba0", text: "#ffffff" };
+
+    const span = document.createElement('span');
+    span.className = 'picker-tag-item tag-pill';
+    span.textContent = tag.name;
+    span.style.backgroundColor = colorConfig.bg;
+    span.style.color = colorConfig.text;
+
+    if (tempSelectedTags.includes(tag.name)) {
+      span.classList.add('selected');
+    }
+
+    span.onclick = (e) => {
+      e.stopPropagation();
+      if (tempSelectedTags.includes(tag.name)) {
+        tempSelectedTags = tempSelectedTags.filter(t => t !== tag.name);
+      } else {
+        tempSelectedTags.push(tag.name);
+      }
+      renderAvailablePickerTags();
+      renderSelectedTags();
+    };
+
+    container.appendChild(span);
+  });
+}
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. 初始化日曆外掛 (Flatpickr)
+  if (typeof flatpickr !== 'undefined') {
+    flatpickr("#startDateInput, #completeDateInput", {
+      dateFormat: "Y/m/d",
+      allowInput: true,
+      disableMobile: "true"
+    });
+  }
+
+  // 2. 星星點擊事件綁定
+  const starContainer = document.querySelector('.star-rating');
+  if (starContainer) {
+    starContainer.style.cursor = 'pointer';
+    starContainer.addEventListener('click', handleStarClick);
+  }
+
+  // 3. 標籤彈窗開啟與關閉邏輯
+  const tagLabel = document.querySelector('.right-column-sections .text-block-label');
+  const selectedTagsContainer = document.getElementById('selectedTagsContainer');
+  const tagPickerPanel = document.getElementById('tagPickerPanel');
+  const editCategorySelect = document.getElementById('editCategorySelect'); // 頁面細類下拉框
+
+  const btnTagCancel = document.getElementById('btnTagCancel');
+  const btnTagConfirm = document.getElementById('btnTagConfirm');
+  const btnTagGoEdit = document.getElementById('btnTagGoEdit');
+
+  // 開啟彈窗函式
+  const openPickerPanel = (e) => {
+    if (document.body.classList.contains('edit-state')) {
+      e.stopPropagation();
+      
+      // 每次打開時，將目前生效的 currentBookTags 複製給暫存快照 tempSelectedTags
+      tempSelectedTags = [...currentBookTags];
+      
+      // 重新渲染小彈窗與已選區
+      renderSelectedTags();
+      renderAvailablePickerTags(); 
+      
+      if (tagPickerPanel) tagPickerPanel.classList.add('active');
+    }
+  };
+
+  // 當使用者在編輯模式下切換左側「分類/細類」選單時，同步刷新下方的標籤庫
+  if (editCategorySelect) {
+    editCategorySelect.addEventListener('change', () => {
+      // 若標籤庫隨細類切換，自動過濾掉不屬於新細類的標籤或重新對應
+      renderSelectedTags();
+      renderAvailablePickerTags();
+    });
+  }
+
+  // 點擊標題或已選標籤區域均可打開彈窗
+  if (tagLabel) tagLabel.addEventListener('click', openPickerPanel);
+  if (selectedTagsContainer) selectedTagsContainer.addEventListener('click', openPickerPanel);
+
+  // 阻止彈窗內部的點擊事件冒泡
+  if (tagPickerPanel) {
+    tagPickerPanel.addEventListener('click', (e) => e.stopPropagation());
+  }
+
+  // ★ 需求 1：取消按鈕 - 不套用變更，還原備份並關閉彈窗
+  if (btnTagCancel) {
+    btnTagCancel.addEventListener('click', (e) => {
+      e.stopPropagation();
+      tempSelectedTags = []; // 清空暫存
+      if (tagPickerPanel) tagPickerPanel.classList.remove('active');
+    });
+  }
+
+  // ★ 需求 1：確認按鈕 - 儲存變更，更新 currentBookTags 並關閉彈窗
+  if (btnTagConfirm) {
+    btnTagConfirm.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentBookTags = [...tempSelectedTags]; // 寫入真正生效的標籤
+      renderSelectedTags();                    // 更新上方顯示區
+      if (tagPickerPanel) tagPickerPanel.classList.remove('active');
+    });
+  }
+
+  // ★ 需求 4：左側跳轉編輯按鈕
+  if (btnTagGoEdit) {
+      btnTagGoEdit.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // 關閉小選單彈窗
+        if (tagPickerPanel) tagPickerPanel.classList.remove('active');
+        // 開啟大管理彈窗
+        openManageTagsModal();
+      });
+    }
+
+  // 大彈窗內的連動選單初始化與事件對應
+  initManageCategorySelects();
+
+  // 色彩選取按鈕點擊事件
+  document.querySelectorAll('#colorPickerDots .color-dot').forEach(dot => {
+    dot.addEventListener('click', (e) => {
+      document.querySelectorAll('#colorPickerDots .color-dot').forEach(d => d.classList.remove('active'));
+      e.target.classList.add('active');
+      selectedColorKey = e.target.getAttribute('data-color');
+    });
+  });
+
+  // 新增 / 編輯確認按鈕點擊 (需求 4)
+  document.getElementById('btnManageTagConfirm')?.addEventListener('click', handleManageTagConfirm);
+
+
+  // 大彈窗「完成」按鈕處理邏輯
+  document.getElementById('btnManageTagsSaveClose')?.addEventListener('click', () => {
+    // 1. 將修改後的標籤庫同步覆寫回全域 tagDatabase 並存入 localStorage
+    tagDatabase = JSON.parse(JSON.stringify(manageTagsTemp));
+    localStorage.setItem('tagDatabase', JSON.stringify(tagDatabase));
+
+    // 2. 取得當前細類的最新所有有效標籤名稱列表
+    const currentKey = getFullCategoryKey();
+    const validTags = (tagDatabase[currentKey] || []).map(t => typeof t === 'string' ? t : t.name);
+
+    // 3. 過濾掉已經在大彈窗被刪除掉的標籤 (避免殘留不存在的標籤)
+    currentBookTags = currentBookTags.filter(tagName => validTags.includes(tagName));
+    tempSelectedTags = [...currentBookTags]; // 同步更新小彈窗暫存快照
+
+    // 4. 關閉大彈窗
+    document.getElementById('manageTagsModalOverlay').style.display = 'none';
+
+    // 5. 重新渲染畫面與小彈窗，並重新開啟小彈窗 (恢復小彈窗 active 狀態)
+    renderSelectedTags();
+    renderAvailablePickerTags();
+
+    const tagPickerPanel = document.getElementById('tagPickerPanel');
+    if (tagPickerPanel && document.body.classList.contains('edit-state')) {
+      tagPickerPanel.classList.add('active'); // 確保小彈窗彈出顯示最新結果
+    }
+  });
+
+  // 1. 右鍵選單點擊「刪除標籤」事件
+  const btnMenuDeleteTag = document.getElementById('btnMenuDeleteTag');
+  if (btnMenuDeleteTag) {
+    btnMenuDeleteTag.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const tagMenu = document.getElementById('tagContextMenu');
+      const targetTagName = tagMenu ? tagMenu.dataset.targetTag : null;
+
+      if (targetTagName) {
+        // 判斷當前是在小彈窗暫存模式還是直接編輯模式
+        const tagPickerPanel = document.getElementById('tagPickerPanel');
+        if (tagPickerPanel && tagPickerPanel.classList.contains('active')) {
+          tempSelectedTags = tempSelectedTags.filter(t => t !== targetTagName);
+        }
+        
+        // 從正式選擇的標籤陣列中剔除
+        currentBookTags = currentBookTags.filter(t => t !== targetTagName);
+
+        // 重新渲染畫面上的標籤
+        renderSelectedTags();
+        renderAvailablePickerTags();
+      }
+
+      if (tagMenu) tagMenu.style.display = 'none';
+    });
+  }
+
+  // 2. 點擊全域任意處自動隱藏標籤右鍵選單
+  document.addEventListener('click', () => {
+    const tagMenu = document.getElementById('tagContextMenu');
+    if (tagMenu) tagMenu.style.display = 'none';
+  });
+
+  // 4. 讀取 URL 參數並初始化資料
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+  const bookId = urlParams.get('id');
+  const categoryParam = urlParams.get('category') || 'novel'; // 取得預設大分類
+  const subParam = urlParams.get('sub') || '原創';             // 取得預設細類
+
+  const body = document.getElementById('pageBody');
+  const btn = document.getElementById('actionToggleBtn');
+  const coverBox = document.getElementById('coverBox');
+
+// 如果是新增模式 (沒有 id)[cite: 40]
+if (!bookId) {
+  updateDetailPanelBackground(categoryParam); // 直接設置背景圖
+  initCategoryOptions(categoryParam);         // 初始化正確的細類選項
+
+  const defaultSub = subParam || (categoryParam === 'comic' ? '韓漫' : '原創');
+  const editSelectCat = document.getElementById('editCategorySelect');
+  if (editSelectCat) editSelectCat.value = defaultSub;
+  
+  // 初始化下拉選項[cite: 40, 41]
+  const defaultBook = { category: categoryParam, subCategory: subParam, gender: 'bg', progress: '更新中', status: '待閱讀' };
+  if (typeof initDetailOptions === 'function') {
+    initDetailOptions(categoryParam, defaultBook);
+  }
+}
+  
+  if (bookId && typeof bookDatabase !== 'undefined') {
+    const currentBook = bookDatabase.find(book => book.id === bookId);
+    if (currentBook) {
+      fillBookData(currentBook);
+    }
+  }
+
+  if (mode === 'edit') {
+    body.classList.add('edit-state');
+    if (btn) btn.textContent = '完成';
+    if (!bookId && coverBox) coverBox.textContent = '';
+  }
+
+// 刪除彈窗 DOM 元素綁定
+  const deleteModalOverlay = document.getElementById('deleteModalOverlay');
+  const btnDeleteCancel = document.getElementById('btnDeleteCancel');
+  const btnDeleteConfirm = document.getElementById('btnDeleteConfirm');
+
+  // 取消刪除：關閉彈窗
+  if (btnDeleteCancel) {
+    btnDeleteCancel.addEventListener('click', () => {
+      if (deleteModalOverlay) deleteModalOverlay.style.display = 'none';
+    });
+  }
+
+  // 確認刪除：刪除資料庫中的該筆項目並退回上一頁
+  if (btnDeleteConfirm) {
+    btnDeleteConfirm.addEventListener('click', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const bookId = urlParams.get('id');
+
+      if (bookId && typeof bookDatabase !== 'undefined') {
+        // 過濾掉當前 ID 的資料
+        bookDatabase = bookDatabase.filter(book => book.id !== bookId);
+
+        // 儲存至 localStorage
+        if (typeof saveDatabase === 'function') {
+          saveDatabase();
+        } else {
+          localStorage.setItem('bookDatabase', JSON.stringify(bookDatabase));
+        }
+      }
+
+      // 關閉彈窗並退回上一頁
+      if (deleteModalOverlay) deleteModalOverlay.style.display = 'none';
+      history.back();
+    });
+  }
+
+const deleteBtn = document.getElementById('deleteBtn');
+if (deleteBtn) {
+  deleteBtn.addEventListener('click', () => {
+    const deleteModalOverlay = document.getElementById('deleteModalOverlay');
+    if (deleteModalOverlay) {
+      deleteModalOverlay.style.display = 'flex';
+    }
+  });
+}
+
+// 大彈窗標籤刪除
+const btnManageMenuDeleteTag = document.getElementById('btnManageMenuDeleteTag');
+if (btnManageMenuDeleteTag) {
+  btnManageMenuDeleteTag.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const tagMenu = document.getElementById('manageTagContextMenu');
+    if (!tagMenu) return;
+
+    const fullKey = tagMenu.dataset.fullKey;
+    const targetIndex = parseInt(tagMenu.dataset.targetIndex, 10);
+
+    if (fullKey && !isNaN(targetIndex) && manageTagsTemp[fullKey]) {
+      // 從暫存標籤庫中移除該標籤
+      manageTagsTemp[fullKey].splice(targetIndex, 1);
+
+      // 若正在編輯該標籤，重置下方編輯框
+      if (selectedTagIndex === targetIndex) {
+        resetManageEditForm();
+      } else if (selectedTagIndex > targetIndex) {
+        selectedTagIndex--;
+      }
+
+      // 重新渲染大彈窗內的標籤列表
+      renderManageTagsList();
+    }
+
+    tagMenu.style.display = 'none';
+  });
+}
+
+// 點擊任意處隱藏大彈窗標籤右鍵選單
+document.addEventListener('click', () => {
+  const tagMenu = document.getElementById('manageTagContextMenu');
+  if (tagMenu) tagMenu.style.display = 'none';
+});
+  
+});
+
+// 大彈窗連動選單邏輯 (需求 3)
+function initManageCategorySelects() {
+  const mainSelect = document.getElementById('manageMainCategorySelect');
+  const subSelect = document.getElementById('manageSubCategorySelect');
+
+  const mainCategories = [
+    { key: "novel", text: "小說" },
+    { key: "comic", text: "漫畫" },
+    { key: "video", text: "影視" },
+    { key: "game", text: "遊戲" }
+  ];
+
+  mainSelect.innerHTML = mainCategories.map(c => `<option value="${c.key}">${c.text}</option>`).join('');
+
+  mainSelect.addEventListener('change', () => {
+    updateManageSubSelect(mainSelect.value);
+  });
+
+  subSelect.addEventListener('change', () => {
+    resetManageEditForm();
+    renderManageTagsList();
+  });
+}
+
+function updateManageSubSelect(mainKey, defaultSub = null) {
+  const subSelect = document.getElementById('manageSubCategorySelect');
+  const config = mediaOptionsConfig[mainKey];
+
+  if (mainKey === 'comic' || !config || !config.types) {
+    subSelect.innerHTML = '<option value=""></option>';
+    subSelect.disabled = true;
+  } else {
+    subSelect.disabled = false;
+    subSelect.innerHTML = config.types.map(t => `<option value="${t}">${t}</option>`).join('');
+    if (defaultSub && config.types.includes(defaultSub)) {
+      subSelect.value = defaultSub;
+    }
+  }
+
+  resetManageEditForm();
+  renderManageTagsList();
+}
+
+// 開啟大標籤管理彈窗並同步目前書籍分類
+function openManageTagsModal() {
+  manageTagsTemp = JSON.parse(JSON.stringify(tagDatabase));
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // 優先使用目前書籍真正的 category
+  const bookId = urlParams.get('id');
+  const currentBook = (typeof bookDatabase !== 'undefined')
+    ? bookDatabase.find(book => book.id === bookId)
+    : null;
+
+  const currentMain =
+    currentBook?.category ||
+    urlParams.get('category') ||
+    'novel';
+
+  const currentBookSub =
+    currentBook?.subCategory ||
+    document.getElementById('editCategorySelect')?.value ||
+    '';
+
+  const mainSelect = document.getElementById('manageMainCategorySelect');
+
+  if (mainSelect) {
+    mainSelect.value = currentMain;
+  }
+
+  // ★ 漫畫特殊規則：
+  // 標籤管理固定使用「漫畫_漫畫」，
+  // 不使用韓漫 / 日漫 / 美漫作為標籤分類。
+  if (currentMain === 'comic') {
+    updateManageSubSelect(currentMain, '漫畫');
+  } else {
+    updateManageSubSelect(currentMain, currentBookSub);
+  }
+
+  document.getElementById('manageTagsModalOverlay').style.display = 'flex';
+}
+
+// 渲染大彈窗內的標籤陣列
+function renderManageTagsList() {
+  const container = document.getElementById('manageTagsListContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const mainSelect = document.getElementById('manageMainCategorySelect');
+  const subSelect = document.getElementById('manageSubCategorySelect');
+  
+  // 取得目前大彈窗真正使用的標籤庫 Key
+  let fullKey;
+  if (mainSelect.value === 'comic') {
+    // 漫畫所有細類共用同一套標籤
+    fullKey = '漫畫_漫畫';
+  } else {
+    const mainCatMap = {
+      novel: "小說",
+      video: "影視",
+      game: "遊戲"
+    };
+    const mainCatName = mainCatMap[mainSelect.value] || "小說";
+    fullKey = `${mainCatName}_${subSelect.value}`;
+  }
+
+  const pool = manageTagsTemp[fullKey] || [];
+
+  const sortedPool = (typeof sortTags === 'function') ? sortTags([...pool]) : pool;
+
+  sortedPool.forEach((tag) => {
+    const originalIndex = pool.indexOf(tag);
+    const colorConfig = TAG_COLORS[tag.color] || { bg: '#b5aba0', text: '#ffffff' };
+    const tagEl = document.createElement('div');
+    tagEl.className = 'manage-tag-item' + (selectedTagIndex === originalIndex ? ' selected' : '');
+    tagEl.style.backgroundColor = colorConfig.bg;
+    tagEl.style.color = colorConfig.text;
+    tagEl.textContent = tag.name;
+
+// 左鍵點擊：編輯標籤名稱與顏色
+    tagEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (selectedTagIndex === originalIndex) {
+        resetManageEditForm();
+      } else {
+        selectedTagIndex = originalIndex;
+        document.getElementById('manageTagNameInput').value = tag.name;
+        selectedColorKey = tag.color || 'c1';
+        
+        document.querySelectorAll('#colorPickerDots .color-dot').forEach(dot => {
+          dot.classList.toggle('active', dot.getAttribute('data-color') === selectedColorKey);
+        });
+      }
+      renderManageTagsList();
+    });
+
+// ★ 補上這段：右鍵點擊事件 (彈出刪除選單)
+    tagEl.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const tagMenu = document.getElementById('manageTagContextMenu');
+      if (!tagMenu) return;
+
+      // 計算縮放後的座標，防止 3D 縮放偏移
+      const containerEl = document.querySelector('.app-container');
+      let scale = 1;
+      if (containerEl) {
+        const transformVal = window.getComputedStyle(containerEl).transform;
+        if (transformVal !== 'none') {
+          const matrixValues = transformVal.match(/matrix\((.+)\)/);
+          if (matrixValues) scale = parseFloat(matrixValues[1].split(',')[0]);
+        }
+      }
+
+      const rect = document.body.getBoundingClientRect();
+      const mouseX = (e.clientX - rect.left) / scale;
+      const mouseY = (e.clientY - rect.top) / scale;
+
+      tagMenu.style.left = `${mouseX}px`;
+      tagMenu.style.top = `${mouseY}px`;
+      tagMenu.style.display = 'block';
+
+      // 紀錄當前欲刪除的資料 Key 與陣列索引
+      tagMenu.dataset.fullKey = fullKey;
+      tagMenu.dataset.targetIndex = originalIndex;
+    });
+
+    container.appendChild(tagEl);
+  });
+}
+
+// 重置編輯狀態為預設新增
+function resetManageEditForm() {
+  selectedTagIndex = null;
+  document.getElementById('manageTagNameInput').value = '';
+  selectedColorKey = 'c1';
+  document.querySelectorAll('#colorPickerDots .color-dot').forEach(dot => {
+    dot.classList.toggle('active', dot.getAttribute('data-color') === 'c1');
+  });
+  document.getElementById('btnManageTagConfirm').classList.remove('edit-mode');
+}
+
+// 處理新增或修改標籤點擊
+function handleManageTagConfirm() {
+  const mainSelect = document.getElementById('manageMainCategorySelect');
+  const subSelect = document.getElementById('manageSubCategorySelect');
+
+  let fullKey;
+
+  // 漫畫所有細類統一使用同一套標籤庫
+  if (mainSelect.value === 'comic') {
+    fullKey = '漫畫_漫畫';
+  } else {
+    const mainCatMap = {
+      novel: "小說",
+      video: "影視",
+      game: "遊戲"
+    };
+    const mainCatName = mainCatMap[mainSelect.value] || "小說";
+    fullKey = `${mainCatName}_${subSelect.value}`;
+  }
+
+  const inputEl = document.getElementById('manageTagNameInput');
+  const nameStr = inputEl.value.trim();
+
+  if (!nameStr) return;
+  if (!manageTagsTemp[fullKey]) manageTagsTemp[fullKey] = [];
+
+  const pool = manageTagsTemp[fullKey];
+
+  if (selectedTagIndex === null) {
+    if (pool.some(t => t.name === nameStr)) {
+      alert('該細類下已有相同名稱的標籤！');
+      return;
+    }
+    pool.push({ name: nameStr, color: selectedColorKey });
+  } else {
+    pool[selectedTagIndex] = { name: nameStr, color: selectedColorKey };
+  }
+
+  if (typeof sortTags === 'function') {
+    manageTagsTemp[fullKey] = sortTags(pool);
+  }
+
+  resetManageEditForm();
+  renderManageTagsList();
+}
+
+
+// 星星評分 UI 渲染
+function renderStarRating(rating) {
+  const starContainer = document.querySelector('.star-rating');
+  if (!starContainer) return;
+  starContainer.textContent = rating === 0 ? '☆☆☆☆☆' : '★'.repeat(rating) + '☆'.repeat(5 - rating);
+}
+
+// 點擊星星切換邏輯
+function handleStarClick() {
+  const body = document.getElementById('pageBody');
+  if (!body.classList.contains('edit-state')) return;
+  currentRating = (currentRating + 1) % 6;
+  renderStarRating(currentRating);
+}
+
+// 填入資料到畫面
+function fillBookData(book) {
+
+// 1. 根據書籍的大分類切換背景圖與分類下拉選項
+  const categoryKey = book.category || 'novel';
+  updateDetailPanelBackground(categoryKey);
+  initCategoryOptions(categoryKey); // 動態填入該大分類對應的細類
+
+const viewOnlyCat = document.getElementById('categoryText');
+  const editSelectCat = document.getElementById('editCategorySelect');
+  const defaultSub = book.subCategory || (categoryKey === 'comic' ? '韓漫' : '原創');
+
+  if (viewOnlyCat) viewOnlyCat.textContent = defaultSub;
+  if (editSelectCat) editSelectCat.value = defaultSub;
+
+  if (typeof initDetailOptions === 'function') {
+    initDetailOptions(book.category || 'novel', book);
+  }
+
+  window.currentCoverBase64 = book.cover || '';
+  if (typeof renderCoverImage === 'function') {
+    renderCoverImage(window.currentCoverBase64);
+  }
+
+  const middleCol = document.querySelector('.middle-column');
+  if (middleCol) {
+    const titleRow = middleCol.querySelector('.info-row:nth-child(1)');
+    if (titleRow) {
+      titleRow.querySelector('.view-only').textContent = book.title || '';
+      titleRow.querySelector('.edit-input').value = book.title || '';
+    }
+
+    const authorRow = middleCol.querySelector('.info-row:nth-child(2)');
+    if (authorRow) {
+      authorRow.querySelector('.view-only').textContent = book.author || '';
+      authorRow.querySelector('.edit-input').value = book.author || '';
+    }
+
+    const genderRow = middleCol.querySelector('.info-row:nth-child(3)');
+    if (genderRow) {
+      const genderMap = { bg: "言情", bl: "純愛", no_cp: "無CP", no_cp_female: "無CP女主", no_cp_male: "無CP男主" };
+      genderRow.querySelector('.view-only').textContent = genderMap[book.gender] || book.gender || '言情';
+      genderRow.querySelector('.edit-select').value = book.gender || 'bg';
+    }
+  }
+
+  // ★ 補上這段：讀取與初始化跳轉網址
+  window.currentReadLink = book.readLink || '';
+  const readBtnGroup = document.querySelector('.read-btn-group');
+  if (readBtnGroup) {
+    readBtnGroup.href = window.currentReadLink || '#';
+    if (window.currentReadLink) {
+      readBtnGroup.setAttribute('target', '_blank');
+      readBtnGroup.setAttribute('rel', 'noopener noreferrer');
+    } else {
+      readBtnGroup.removeAttribute('target');
+      readBtnGroup.removeAttribute('rel');
+    }
+  }
+
+  currentRating = Number(book.rating) || 0;
+  renderStarRating(currentRating);
+
+  const progressTextEl = document.getElementById('progressText');
+  if (progressTextEl) progressTextEl.textContent = book.progress || '';
+
+  const statusTextEl = document.getElementById('statusText');
+  if (statusTextEl) statusTextEl.textContent = book.status || '';
+
+  const editProgressSelect = document.getElementById('editProgressSelect');
+  if (editProgressSelect) editProgressSelect.value = book.progress || '';
+
+  const editStatusSelect = document.getElementById('editStatusSelect');
+  if (editStatusSelect) editStatusSelect.value = book.status || '';
+
+  document.getElementById('startDateText').textContent = book.startDate || '';
+  document.getElementById('startDateInput').value = book.startDate || '';
+  document.getElementById('completeDateText').textContent = book.completeDate || '';
+  document.getElementById('completeDateInput').value = book.completeDate || '';
+
+  const textBlocks = document.querySelectorAll('.fixed-text-box');
+  if (textBlocks[0]) {
+    textBlocks[0].querySelector('.view-only').textContent = book.intro || '';
+    textBlocks[0].querySelector('.edit-textarea').value = book.intro || '';
+  }
+  if (textBlocks[1]) {
+    textBlocks[1].querySelector('.view-only').textContent = book.remark || '';
+    textBlocks[1].querySelector('.edit-textarea').value = book.remark || '';
+  }
+  if (textBlocks[2]) {
+    textBlocks[2].querySelector('.view-only').textContent = book.thoughts || '';
+    textBlocks[2].querySelector('.edit-textarea').value = book.thoughts || '';
+  }
+
+  currentBookTags = book.tags ? [...book.tags] : [];
+  renderSelectedTags();
+  renderAvailablePickerTags();
+
+  if (typeof updateOngoingUI === 'function') {
+    updateOngoingUI(book.isOngoing);
+  }
+}
+
+// 渲染「上方紅圈區」已選取的標籤
+function renderSelectedTags() {
+  const container = document.getElementById('selectedTagsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const isEdit = document.body.classList.contains('edit-state');
+  
+  // ★ 修改處：改用 getFullCategoryKey() 取得「大分類_細類」正確 Key (例如: "小說_原創")
+  const fullKey = getFullCategoryKey();
+  const categoryTagPool = (typeof tagDatabase !== 'undefined' && tagDatabase[fullKey]) ? tagDatabase[fullKey] : [];
+
+  // 根據當前狀態選取對應的標籤陣列 (編輯彈窗開啟時讀取 tempSelectedTags，否則讀取 currentBookTags)
+  const tagPickerPanel = document.getElementById('tagPickerPanel');
+  const isPanelActive = tagPickerPanel && tagPickerPanel.classList.contains('active');
+  const activeTags = (isEdit && isPanelActive) ? tempSelectedTags : currentBookTags;
+
+  const detailedTags = activeTags.map(tagName => {
+    const found = categoryTagPool.find(t => t.name === tagName);
+    return found || { name: tagName, color: 'c1' };
+  });
+
+  const sorted = (typeof sortTags === 'function') ? sortTags(detailedTags) : detailedTags;
+
+  sorted.forEach(tag => {
+    const colorConfig = (typeof TAG_COLORS !== 'undefined' && TAG_COLORS[tag.color]) ? TAG_COLORS[tag.color] : { bg: '#b5aba0', text: '#ffffff' };
+    const span = document.createElement('span');
+    span.className = 'tag-pill' + (isEdit ? ' removable' : '');
+    span.textContent = tag.name;
+    span.style.backgroundColor = colorConfig.bg;
+    span.style.color = colorConfig.text;
+
+    // 只有在彈窗開啟時，點擊上方已選標籤才會將其移除
+    if (isEdit) {
+      span.onclick = (e) => {
+        if (tagPickerPanel && tagPickerPanel.classList.contains('active')) {
+          e.stopPropagation();
+          // 更新暫存陣列並【同時更新上下兩區】
+          tempSelectedTags = tempSelectedTags.filter(t => t !== tag.name);
+          renderSelectedTags();
+          renderAvailablePickerTags();
+        }
+      };
+
+    }
+
+    container.appendChild(span);
+  });
+}
+
+//彈窗選取
+function renderAvailablePickerTags() {
+  const container = document.getElementById('availableTagsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  // 1. 取得當前頁面對應的標籤庫 Key (例如 "小說_原創" 或 "漫畫_漫畫")
+  const currentKey = getFullCategoryKey();
+  
+  // 優先從全域 tagDatabase 或 localStorage 讀取最新標籤
+  let rawTags = tagDatabase[currentKey] || [];
+
+  // 如果 tagDatabase 裡面是空的，嘗試補救從 localStorage 讀取
+  if (rawTags.length === 0) {
+    const saved = localStorage.getItem('tagDatabase');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        rawTags = parsed[currentKey] || [];
+      } catch(e){}
+    }
+  }
+
+  // 2. 格式化標籤資料 (支援字串或物件)
+  let tagList = rawTags.map(tag => {
+    if (typeof tag === 'string') {
+      return { name: tag, color: 'c1' };
+    }
+    return tag;
+  });
+
+  // 3. 排序標籤 (若有 sortTags 函式)
+  if (typeof sortTags === 'function') {
+    tagList = sortTags(tagList);
+  }
+
+  // 4. 動態渲染標籤顆粒到小彈窗中
+  tagList.forEach(tag => {
+    const colorKey = tag.color || 'c1';
+    const colorConfig = (typeof TAG_COLORS !== 'undefined' && TAG_COLORS[colorKey]) 
+      ? TAG_COLORS[colorKey] 
+      : { bg: "#b5aba0", text: "#ffffff" };
+
+    const span = document.createElement('span');
+    span.className = 'picker-tag-item tag-pill';
+    span.textContent = tag.name;
+    span.style.backgroundColor = colorConfig.bg;
+    span.style.color = colorConfig.text;
+
+    // 比對當前暫存陣列 (tempSelectedTags) 決定是否加上高亮選中樣式
+    if (tempSelectedTags.includes(tag.name)) {
+      span.classList.add('selected');
+    }
+
+    // 點擊切換選取狀態
+    span.onclick = (e) => {
+      e.stopPropagation();
+      if (tempSelectedTags.includes(tag.name)) {
+        tempSelectedTags = tempSelectedTags.filter(t => t !== tag.name);
+      } else {
+        tempSelectedTags.push(tag.name);
+      }
+      // 重新渲染選中狀態與上方已選區
+      renderAvailablePickerTags();
+      renderSelectedTags();
+    };
+
+    container.appendChild(span);
+  });
+}
+
+// 編輯 / 完成模式切換與儲存
+function toggleEditMode() {
+  const body = document.getElementById('pageBody');
+  const btn = document.getElementById('actionToggleBtn');
+  const middleCol = document.querySelector('.middle-column');
+  const tagPickerPanel = document.getElementById('tagPickerPanel');
+
+  if (tagPickerPanel) {
+    tagPickerPanel.classList.remove('active');
+  }
+
+  if (body.classList.contains('edit-state')) {
+    const urlParams = new URLSearchParams(window.location.search);
+    let bookId = urlParams.get('id');
+
+    // 取得當前選擇的細類與大分類
+    const selectedSubCategory = document.getElementById('editCategorySelect').value;
+    let computedCategory = urlParams.get('category') || 'novel';
+    
+    if (typeof mediaOptionsConfig !== 'undefined') {
+      for (const [catKey, config] of Object.entries(mediaOptionsConfig)) {
+        if (config.types && config.types.includes(selectedSubCategory)) {
+          computedCategory = catKey;
+          break;
+        }
+      }
+    }
+
+    // 找到既有資料或建立新資料
+    let currentBook = bookDatabase.find(book => book.id === bookId);
+    
+    if (!currentBook) {
+      // 若是全新新增的書籍，建立新物件並放入資料庫
+      bookId = computedCategory + '_' + Date.now(); 
+      currentBook = { id: bookId };
+      bookDatabase.push(currentBook);
+      
+      // 更新 URL 避免重複新增
+      window.history.replaceState(null, '', `detail.html?mode=edit&id=${bookId}&category=${computedCategory}`);
+    }
+
+    // 更新物件屬性
+    currentBook.id = bookId;
+    currentBook.cover = window.currentCoverBase64 || '';
+    currentBook.readLink = window.currentReadLink || ''; // 儲存跳轉網址
+    currentBook.title = middleCol.querySelector('.info-row:nth-child(1) .edit-input').value || '未命名';
+    currentBook.author = middleCol.querySelector('.info-row:nth-child(2) .edit-input').value || '';
+    currentBook.gender = middleCol.querySelector('.info-row:nth-child(3) .edit-select').value || 'bg';
+    currentBook.subCategory = selectedSubCategory;
+    currentBook.category = computedCategory;
+
+    currentBook.progress = document.getElementById('editProgressSelect').value || '';
+    currentBook.status = document.getElementById('editStatusSelect').value || '';
+    currentBook.rating = currentRating;
+    currentBook.tags = [...currentBookTags];
+
+    currentBook.startDate = document.getElementById('startDateInput').value || '';
+    currentBook.completeDate = document.getElementById('completeDateInput').value || '';
+
+    const textBlocks = document.querySelectorAll('.fixed-text-box');
+    if (textBlocks[0]) currentBook.intro = textBlocks[0].querySelector('.edit-textarea').value || '';
+    if (textBlocks[1]) currentBook.remark = textBlocks[1].querySelector('.edit-textarea').value || '';
+    if (textBlocks[2]) currentBook.thoughts = textBlocks[2].querySelector('.edit-textarea').value || '';
+
+    // 寫入持久化紀錄
+    if (typeof saveDatabase === 'function') saveDatabase();
+    if (typeof updateLastEditedBook === 'function') updateLastEditedBook(bookId);
+
+    // 即時更新面板背景 UI
+    updateDetailPanelBackground(computedCategory);
+
+    // 重新渲染畫面顯示
+    fillBookData(currentBook);
+
+    body.classList.remove('edit-state');
+    if (btn) btn.textContent = '';
+  } else {
+    body.classList.add('edit-state');
+    if (btn) btn.textContent = '';
+    renderSelectedTags();
+    renderAvailablePickerTags();
+  }
+}
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Media Record - 主介面</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="shelf.css">
+  <script src="database.js" defer></script>
+  <script src="main.js" defer></script>
+  <!-- Flatpickr 樣式表 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <!-- Flatpickr 主程式 -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  
+</head>
+<body>
+  <!-- 等比縮放的最外層容器 (以設計稿 1200x800 為基準) -->
+  <div class="app-container">
+
+  <div class="main-wrapper">
+    
+    <!-- 上半部區域 -->
+    <div class="top-section">
+      <!-- 將原本的 div 改為帶有 href 的超連結 (假設轉移頁面叫 data-transfer.html) -->
+      <a href="data-transfer.html" class="data-transfer-card">
+      <!-- 如果圖片本身已經包含了「資料轉移」四個字，這裡可以清空文字 -->
+      </a>
+      
+      <div class="profile-card">
+        
+      </div>
+      
+      <!-- 3. 進行中列表區塊 -->
+      <div class="ongoing-card" id="ongoingContainer">
+        <!-- 內容將由 main.js 動態渲染生成 -->
+      </div>
+      
+        <div class="quick-add-card">
+          <!-- 第一排：名稱 -->
+          <input type="text" placeholder="名稱">
+
+          <!-- 第二排：分類與細類並排 -->
+            <div class="quick-add-row">
+              <!-- 分類選單（加上 id="categorySelect"） -->
+              <select id="categorySelect" required onchange="updateSubcategories()">
+                <option value="" disabled selected hidden>分類</option>
+                <option value="novel">小說</option>
+                <option value="comic">漫畫</option>
+                <option value="video">影片</option>
+                <option value="game">遊戲</option>
+              </select>
+
+            <!-- 細類選單（加上 id="subCategorySelect"） -->
+            <select id="subCategorySelect" required>
+              <option value="" disabled selected hidden>細類</option>
+            </select>
+          </div>
+
+          <!-- 第三排：開始日期（改為 date 類型，並設定預設值為今日） -->
+          <input type="text" id="startDateInput" placeholder="日期" required>
+
+          <!-- 第四排：確認按鈕 -->
+          <button type="button" class="quick-add-submit"></button>
+        </div>
+    </div>
+
+    <!-- 下半部區域 -->
+    <div class="bottom-section">
+      <!-- 1. 小說分類 -->
+      <a href="novel-01.html" class="category-card" style="--card-bg: url('assets/mainUI/main_novelcard.png');">
+        <div class="card-base-bg"></div>
+        <div class="card-floating-layer">
+          <img src="assets/mainUI/main_novelcard_title.png" class="card-title-img" alt="小說標題">
+          <img src="assets/mainUI/main_novelcard_cover.png" class="card-cover-img" alt="小說封面">
+        </div>
+      </a>
+
+      <!-- 2. 漫畫分類 -->
+      <a href="comic.html" class="category-card" style="--card-bg: url('assets/mainUI/main_comiccard.png');">
+        <div class="card-base-bg"></div>
+        <div class="card-floating-layer">
+          <img src="assets/mainUI/main_comiccard_title.png" class="card-title-img" alt="漫畫標題">
+          <img src="assets/mainUI/main_comiccard_cover.png" class="card-cover-img" alt="漫畫封面">
+        </div>
+      </a>
+
+      <!-- 3. 影視分類 -->
+      <a href="video.html" class="category-card" style="--card-bg: url('assets/mainUI/main_videocard.png');">
+        <div class="card-base-bg"></div>
+        <div class="card-floating-layer">
+          <img src="assets/mainUI/main_videocard_title.png" class="card-title-img" alt="影視標題">
+          <img src="assets/mainUI/main_videocard_cover.png" class="card-cover-img" alt="影視封面">
+        </div>
+      </a>
+
+      <!-- 4. 遊戲分類 -->
+      <a href="game.html" class="category-card" style="--card-bg: url('assets/mainUI/main_gamecard.png');">
+        <div class="card-base-bg"></div>
+        <div class="card-floating-layer">
+          <img src="assets/mainUI/main_gamecard_title.png" class="card-title-img" alt="遊戲標題">
+          <img src="assets/mainUI/main_gamecard_cover.png" class="card-cover-img" alt="遊戲封面">
+        </div>
+      </a>
+    
+      
+    <div class="right-sidebar-panel">
+      <!-- 最近編輯卡片 -->
+      <a href="javascript:void(0)" class="recent-edit-card">
+        <div class="recent-edit-thumb">圖片</div>
+        <div class="recent-edit-title">無標題</div>
+      </a>
+
+      <div class="quit-card"></div>
+    </div>
+
+    </div>
+
+  </div>
+
+  </div>
+</body>
+</html>

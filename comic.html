@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Media Record - 漫畫</title>
+  <!-- 引入共用樣式（如果還有用到其他共用設定的話），以及專屬的 shelf.css -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="shelf.css">
+  <script src="database.js" defer></script>
+  <script src="main.js" defer></script>
+</head>
+
+<body class="category-body page-comic">
+  
+  
+
+<!-- 左側固定導覽列 -->
+  <aside class="sub-sidebar">
+    <!-- 返回上一頁按鈕[cite: 13] -->
+    <div class="nav-icon-btn back-btn" onclick="history.back()" title="返回"></div> 
+
+    <!-- 小說大分類 (帶有展開/收合控制)[cite: 13] -->
+    <div class="nav-group" id="group-novel">
+      <!-- 替換成圖片 class 並移除文字 -->
+      <div class="nav-icon-btn sidebar-novel" onclick="toggleSubMenu('group-novel')" title="漫畫"></div>
+      <div class="sub-menu">
+        <a href="novel-01.html" class="sub-menu-item">原創</a>
+        <a href="novel-02.html" class="sub-menu-item">綜英美</a>
+        <a href="novel-03.html" class="sub-menu-item">衍生</a>
+        <a href="novel-04.html" class="sub-menu-item">其他</a>
+      </div>
+    </div>
+
+    <!-- 漫畫大分類[cite: 13] -->
+    <a href="comic.html" class="sub-menu-item">
+    <div class="nav-icon-btn sidebar-comic" onclick="toggleSubMenu('group-comic')" title="漫畫"></div>
+    </a>
+
+
+    <!-- 影視大分類[cite: 13] -->
+    <div class="nav-group" id="group-video">
+      <div class="nav-icon-btn sidebar-video" onclick="toggleSubMenu('group-video')" title="影視"></div>
+      <div class="sub-menu">
+        <a href="video01.html" class="sub-menu-item">動畫</a>
+        <a href="video02.html" class="sub-menu-item">電影</a>
+        <a href="video03.html" class="sub-menu-item">影集</a>
+        <a href="video04.html" class="sub-menu-item">其他</a>
+      </div>
+    </div>
+
+    <!-- 遊戲大分類[cite: 13] -->
+    <div class="nav-group" id="group-game">
+      <div class="nav-icon-btn sidebar-game" onclick="toggleSubMenu('group-game')" title="遊戲"></div>
+      <div class="sub-menu">
+        <a href="game01.html" class="sub-menu-item">實況</a>
+        <a href="game02.html" class="sub-menu-item">遊玩</a>
+        <a href="game03.html" class="sub-menu-item">解謎</a>
+        <a href="game04.html" class="sub-menu-item">其他</a>
+      </div>
+    </div>
+
+    <!-- HOME 按鈕[cite: 13] -->
+    <div class="nav-icon-btn home-btn" onclick="location.href='index.html'" title="首頁"></div>
+  </aside>
+
+  <!-- 右側主要內容區 -->
+  <main class="list-main">
+    
+    <!-- 頂部操作列 (標題 + 搜尋篩選 + 新增) -->
+    <header class="list-top-bar">
+      <!-- 標題區 -->
+      <div class="list-title-box title-comic">
+        
+      </div>
+
+    <!-- 篩選欄 -->
+    <div class="list-filter-container">
+      <!-- 第一行：關鍵字搜尋與檢視切換按鈕 -->
+      <div class="search-row">
+        <span class="filter-label">關鍵字搜索</span>
+        <input type="text" id="filterKeyword" class="search-input" placeholder="搜尋書名/作者/簡介/備註/心得..." autocomplete="off">
+        <button type="button" id="viewToggleBtn" class="view-toggle-btn card-mode" title="切換檢視模式" onclick="toggleViewMode()"></button>
+      </div>
+
+      <!-- 第二行：各項下拉選單與標籤彈窗觸發區 -->
+      <div class="filter-row">
+        <span class="filter-label">篩選</span>
+        <!-- 下拉欄位 1：性向 -->
+        <select id="filterGender" class="filter-select gender-select">
+          <option value="" disabled selected hidden>性向</option>
+        </select>
+
+        <!-- 下拉欄位 2：進度 -->
+        <select id="filterProgress" class="filter-select progress-select">
+          <option value="" disabled selected hidden>進度</option>
+        </select>
+
+        <!-- 下拉欄位 3：狀態 -->
+        <select id="filterStatus" class="filter-select status-select">
+          <option value="" disabled selected hidden>狀態</option>
+        </select>
+
+        <!-- 標籤欄位：點擊開啟小彈窗 (與 Detail 頁面同款) -->
+        <div class="tag-filter-wrapper" style="position: relative;">
+          <input type="text" id="filterTagInput" class="filter-input-box tag-input" placeholder="選擇標籤" readonly style="cursor: pointer;">
+        </div>
+
+        <!-- 下拉欄位 4：評分 -->
+        <select id="filterRating" class="filter-select rating-select">
+          <option value="" disabled selected hidden>評分</option>
+        </select>
+
+        <!-- 清除與確認按鈕 -->
+        <button type="button" id="btnClearFilter" class="clear-filter-btn" title="清除篩選"></button>
+        <button type="button" id="btnConfirmFilter" class="confirm-filter-btn" title="確認篩選"></button>
+      </div>
+    </div>
+
+      <!-- 右側計數與新增 -->
+      <div class="list-action-right">
+        <div class="count-badge">999</div>
+        <!-- 點擊藍圈的新增按鈕時，直接跳轉到空白的編輯頁面 -->
+        <button class="add-item-btn" onclick="location.href='detail.html?mode=edit&category=comic&sub=韓漫'"></button>
+      </div>
+    </header>
+
+    <!-- 下方書架列表區 (預設為卡片視圖，可透過 JS 切換成表格視圖) -->
+    <section class="book-shelf-container card-view" data-category="comic" data-sub="漫畫" id="shelf-view">
+      
+      <!-- === 視圖 A：卡片視圖的內容 === -->
+      <div class="card-grid-content">
+       
+        
+      </div>
+
+      <!-- === 視圖 B：表格視圖的內容 === -->
+      <div class="table-view-content">
+        <table class="custom-data-table">
+          <thead>
+            <tr>
+              <th>書名</th>
+              <th>作者</th>
+              <th>性向</th>
+              <th>進度</th>
+              <th>日期</th>
+              <th>評分</th>
+              <th>標籤</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>書籍名稱全長最多只能到十六個字符</td>
+              <td>作者最多七個字</td>
+              <td>言情</td>
+              <td>更新中</td>
+              <td>2026/12/29</td>
+              <td>☆☆☆☆☆</td>
+              <td><span class="tag-badge">標籤至多六字</span> <span class="tag-badge">標籤至多六字</span></td>
+            </tr>
+            <tr>
+              <td>書籍名稱全長最多只能到十六個字</td>
+              <td></td>
+              <td>純愛</td>
+              <td>已入V</td>
+              <td></td>
+              <td>★☆☆☆☆</td>
+              <td><span class="tag-badge">標籤至多六字</span></td>
+            </tr>
+            <!-- 更多表格行可以繼續往下加 -->
+            <tr><td>書籍名稱範例三</td><td></td><td>無CP</td><td>已完結</td><td></td><td>★★☆☆☆</td><td></td></tr>
+            <tr><td>書籍名稱範例四</td><td></td><td>無CP女主</td><td>暫時停更</td><td></td><td>★★★☆☆</td><td></td></tr>
+            <tr><td>書籍名稱範例五</td><td></td><td>無CP男主</td><td>更番外中</td><td></td><td>★★★★☆</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+    <!-- 新增：標籤篩選小彈窗 (置於 body 結束前) -->
+<div id="shelfTagPickerPanel" class="tag-picker-panel">
+  <div class="tag-picker-scroll-area">
+    <div class="tag-picker-content" id="shelfAvailableTagsContainer">
+      <!-- JS 動態渲染標籤顆粒 -->
+    </div>
+  </div>
+</div>
+
+  <!-- 視圖切換的簡單 JavaScript 邏輯 -->
+  <script>
+
+/* ==========================================================
+   書架篩選與標籤彈窗核心邏輯 (shelf.js)
+   ========================================================== */
+
+const CURRENT_CATEGORY = "comic";     
+const CURRENT_SUB_CATEGORY = "漫畫"; 
+
+const FILTER_FIELDS_CONFIG = {
+  keywordFields: ["title", "author", "intro", "remark", "thoughts"],
+  selectFields: {
+    gender: "filterGender",
+    progress: "filterProgress",
+    status: "filterStatus",
+    rating: "filterRating"
+  }
+};
+
+let selectedFilterTags = [];     
+let tempShelfFilterTags = [];    
+
+document.addEventListener("DOMContentLoaded", () => {
+  initShelfTagPicker();
+  bindFilterEvents();
+  resetAllFilters();
+  applyBookFilters();
+});
+
+function bindFilterEvents() {
+  const btnConfirm = document.getElementById("btnConfirmFilter");
+  const btnClear = document.getElementById("btnClearFilter");
+  const keywordInput = document.getElementById("filterKeyword");
+
+  if (btnConfirm) btnConfirm.addEventListener("click", applyBookFilters);
+  if (btnClear) {
+    btnClear.addEventListener("click", () => {
+      resetAllFilters();
+      applyBookFilters();
+    });
+  }
+  if (keywordInput) {
+    keywordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") applyBookFilters();
+    });
+  }
+}
+
+function resetAllFilters() {
+  document.getElementById("filterKeyword").value = "";
+  document.getElementById("filterGender").value = "";
+  document.getElementById("filterProgress").value = "";
+  document.getElementById("filterStatus").value = "";
+  document.getElementById("filterRating").value = "";
+  document.getElementById("filterTagInput").value = "";
+  selectedFilterTags = [];
+  tempShelfFilterTags = [];
+}
+
+function applyBookFilters() {
+  const keyword = document.getElementById("filterKeyword").value.trim().toLowerCase();
+  const gender = document.getElementById("filterGender").value;
+  const progress = document.getElementById("filterProgress").value;
+  const status = document.getElementById("filterStatus").value;
+  const rating = document.getElementById("filterRating").value;
+
+  if (typeof bookDatabase === "undefined") return;
+
+  const filteredBooks = bookDatabase.filter(book => {
+    if (book.category !== CURRENT_CATEGORY) return false;
+
+    if (keyword) {
+      const matchKeyword = FILTER_FIELDS_CONFIG.keywordFields.some(field => {
+        const value = book[field];
+        return value && String(value).toLowerCase().includes(keyword);
+      });
+      if (!matchKeyword) return false;
+    }
+
+    if (gender && book.gender !== gender) return false;
+    if (progress && book.progress !== progress) return false;
+    if (status && book.status !== status) return false;
+    if (rating !== "" && Number(book.rating) !== Number(rating)) return false;
+
+    if (selectedFilterTags.length > 0) {
+      const bookTags = book.tags || [];
+      const hasAllTags = selectedFilterTags.every(t => bookTags.includes(t));
+      if (!hasAllTags) return false;
+    }
+
+    return true;
+  });
+
+  renderFilteredResults(filteredBooks);
+}
+
+function renderFilteredResults(books) {
+  if (typeof renderShelf === "function") {
+    renderShelf(books);
+  }
+}
+
+function initShelfTagPicker() {
+  const tagInput = document.getElementById("filterTagInput");
+  // 修正：必須讀取 shelfTagPickerPanel 而非 detail 頁面的 tagPickerPanel
+  const pickerPanel = document.getElementById("shelfTagPickerPanel");
+
+  if (!tagInput || !pickerPanel) return;
+
+  tagInput.addEventListener("click", (e) => {
+    e.stopPropagation();
+    
+    const isShowing = pickerPanel.classList.contains("active");
+    if (isShowing) {
+      pickerPanel.classList.remove("active");
+    } else {
+      const rect = tagInput.getBoundingClientRect();
+      pickerPanel.style.top = `${rect.bottom + 5}px`;
+      pickerPanel.style.left = `${rect.left}px`;
+
+      renderShelfPickerTags();
+      pickerPanel.classList.add("active");
+    }
+  });
+
+  pickerPanel.addEventListener("click", (e) => e.stopPropagation());
+
+  document.addEventListener("click", () => {
+    pickerPanel.classList.remove("active");
+  });
+}
+
+function renderShelfPickerTags() {
+  const container = document.getElementById("shelfAvailableTagsContainer");
+  const tagInput = document.getElementById("filterTagInput");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const uniqueTagsMap = new Map();
+
+  // 1. 從 tagDatabase 讀取漫畫類別標籤 (相容字串與物件格式)
+  if (typeof tagDatabase !== "undefined") {
+    Object.keys(tagDatabase).filter(k => k.startsWith("漫畫_")).forEach(key => {
+      (tagDatabase[key] || []).forEach(tag => {
+        const tagName = typeof tag === "string" ? tag : (tag ? tag.name : null);
+        const tagColor = (typeof tag === "object" && tag.color) ? tag.color : "c1";
+        
+        if (tagName && !/^tag\d+$/i.test(tagName)) {
+          uniqueTagsMap.set(tagName, { name: tagName, color: tagColor });
+        }
+      });
+    });
+  }
+
+  // 2. 從 bookDatabase 抓取當前漫畫書籍已使用的標籤
+  if (typeof bookDatabase !== "undefined") {
+    bookDatabase.forEach(book => {
+      if (book.category === CURRENT_CATEGORY && Array.isArray(book.tags)) {
+        book.tags.forEach(tag => {
+          const tagName = typeof tag === "string" ? tag : (tag ? tag.name : null);
+          if (tagName && !/^tag\d+$/i.test(tagName) && !uniqueTagsMap.has(tagName)) {
+            uniqueTagsMap.set(tagName, { name: tagName, color: "c1" });
+          }
+        });
+      }
+    });
+  }
+
+  const pool = Array.from(uniqueTagsMap.values());
+  const sortedPool = (typeof sortTags === "function") ? sortTags([...pool]) : pool;
+
+  sortedPool.forEach(tag => {
+    const colorKey = tag.color || 'c1';
+    const colorConfig = (typeof TAG_COLORS !== 'undefined' && TAG_COLORS[colorKey]) 
+      ? TAG_COLORS[colorKey] 
+      : { bg: "#b5aba0", text: "#ffffff" };
+
+    const span = document.createElement("span");
+    span.className = "picker-tag-item";
+    span.textContent = tag.name;
+    span.style.backgroundColor = colorConfig.bg;
+    span.style.color = colorConfig.text;
+
+    if (selectedFilterTags.includes(tag.name)) {
+      span.classList.add("selected");
+    }
+
+    span.onclick = (e) => {
+      e.stopPropagation();
+      
+      if (selectedFilterTags.includes(tag.name)) {
+        selectedFilterTags = selectedFilterTags.filter(t => t !== tag.name);
+      } else {
+        selectedFilterTags.push(tag.name);
+      }
+
+      if (tagInput) {
+        tagInput.value = selectedFilterTags.length > 0 ? selectedFilterTags.join(", ") : "";
+      }
+
+      renderShelfPickerTags();
+      applyBookFilters();
+    };
+
+    container.appendChild(span);
+  });
+}
+
+  </script>
+
+</body>
+</html>

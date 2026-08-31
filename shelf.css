@@ -1,0 +1,917 @@
+/* ==========================================================
+   字型宣告：Source Han Serif SC
+   ========================================================== */
+
+/*  SemiBold 字重 (字重 600) */
+@font-face {
+  font-family: 'sourcehan';
+  src: url('assets/fonts/SourceHanSerifSC-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 新增的 Bold 粗體字重 (字重 700) */
+@font-face {
+  font-family: 'sourcehan';
+  src: url('assets/fonts/SourceHanSerifSC-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+body.category-body {
+  background-color: #d6d0c4;
+  margin: 0;
+  display: flex;
+  height: 100vh;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+
+
+/* 1. 左側固定導覽列 */
+
+.sub-sidebar {
+  background-image: url('assets/shelfUI/shelf_sidebarBG.png'); 
+  background-size: cover !important;
+  display: flex;
+  flex-direction: column;
+  padding: 10px; /* 統一內距，讓按鈕四周有空間 */
+  gap: 10px;     /* 按鈕之間的間距 */
+  border-radius: 0 !important;
+  width: 70px;   /* 側邊欄總寬度 (按鈕 50px + 左右 padding 各 10px) */
+  box-sizing: border-box;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+/* 1. 調整導覽列按鈕的基礎共用尺寸與外觀 */
+.nav-icon-btn, .sub-menu-item, .home-btn, .top-back-btn {
+  min-width: 50px !important;
+  min-height: 50px !important;
+  max-width: 50px !important;
+  max-height: 50px !important;
+  border-radius: 0 !important;
+  border: none !important;     /* 移除邊線 */
+  color: #fff;
+  box-shadow: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 0 !important;
+  font-size: 12px;
+  font-family: 'sourcehan', sans-serif;
+  font-weight: bold;
+}
+
+/* 針對「大分類圖片圖標」專用的樣式（移除預設色塊，讓背景圖片完整顯示） */
+.nav-group > .nav-icon-btn {
+  background-color: transparent !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  text-indent: -9999px; /* 隱藏原本的文字 */
+}
+
+/* 讓導覽列大分類按鈕支援背景圖片 */
+.nav-icon-btn.sidebar-novel {
+  background-image: url('assets/shelfUI/shelf_sidebarBTN_novel.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  text-indent: -9999px; /* 將文字隱藏起來 */
+}
+
+.nav-icon-btn.sidebar-comic {
+  background-image: url('assets/shelfUI/shelf_sidebarBTN_comic.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  text-indent: -9999px; /* 將文字隱藏起來 */
+}
+
+.nav-icon-btn.sidebar-video {
+  background-image: url('assets/shelfUI/shelf_sidebarBTN_video.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  text-indent: -9999px; /* 將文字隱藏起來 */
+}
+
+.nav-icon-btn.sidebar-game {
+  background-image: url('assets/shelfUI/shelf_sidebarBTN_game.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  text-indent: -9999px; /* 將文字隱藏起來 */
+}
+
+/* 針對返回按鈕專屬樣式 */
+.nav-icon-btn.back-btn {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background-color: transparent !important; /* 透明底色 */
+  
+  /* 載入你的圖片，請確認檔名是否正確 */
+  background-image: url('assets/shelfUI/shelf_sidebarBTN_back.png') !important; 
+  background-size: contain !important; /* 或用 cover */
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  
+  cursor: pointer;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+/* 滑鼠移上去稍微變暗效果 */
+.nav-icon-btn.back-btn:hover {
+  opacity: 0.8;
+}
+
+
+/* 確保 HOME 按鈕自動貼齊最下方 */
+.home-btn {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background-color: transparent !important; /* 透明底色 */
+  
+  /* 載入你的圖片，請確認檔名是否正確 */
+  background-image: url('assets/shelfUI/shelf_sidebarBTN_home.png') !important; 
+  background-size: contain !important; /* 或用 cover */
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  
+  cursor: pointer;
+  padding: 0 !important;
+  box-sizing: border-box;
+  margin-top: auto;
+}
+
+/* 讓導覽列所有按鈕基礎都帶有平滑轉場效果 */
+.nav-icon-btn, .sub-menu-item, .home-btn, .top-back-btn, .nav-icon-btn.back-btn {
+  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.nav-icon-btn:hover, .sub-menu-item:hover, .home-btn:hover, .top-back-btn:hover {
+  background-color: #5a6268;
+  transform: scale(1.08);
+}
+
+/* 側邊欄群組與子選單展開排版（確保展開時不會跑版） */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sub-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background-color: #a6b191;
+}
+
+.nav-group.active .sub-menu {
+  max-height: 250px;
+  padding: 4px 0;
+}
+
+/* 子選單項目（可保持原樣或依需求微調） */
+.sub-menu-item {
+  width: 50px !important;
+  height: 20px !important; /* 子選單可以維持較扁的長方形或隨你喜歡 */
+  color: #494c29;
+  text-decoration: none;
+  font-size: 14px;
+  background: transparent !important;
+  border: none !important;
+}
+
+.sub-menu-item:hover {
+  background-color: #555b4a !important;
+  color: #fff !important;
+}
+
+
+/* 2. 右側主要內容與上方四個獨立方塊區塊 */
+.list-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 25px 20px;
+  box-sizing: border-box;
+  gap: 12px;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.list-top-bar {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: stretch;
+  gap: 15px;
+  flex-shrink: 0;
+  box-shadow: none !important;
+}
+
+/* 【方塊一】左側標題區 */
+.list-title-box {
+  background-image: url('assets/shelfUI/shelf_title_novel01.png');
+  background-size: cover;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 10px 15px;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.list-title-box .small-cat {
+  font-size: 13px;
+  font-family: 'sourcehan', sans-serif;
+  font-weight: 600;
+  color: #3d4121;
+  margin-bottom: 2px;
+}
+
+.list-title-box .big-subcat {
+  font-size: 26px;
+  font-family: 'sourcehan', sans-serif;
+  font-weight: 600;
+  font-weight: bold;
+  color: #3d4121;
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* 【方塊二】中間搜尋與篩選主區塊 */
+.list-filter-container {
+  flex: 1;
+  width: 1300px !important;
+  max-width: 1300px !important;
+  height: 93px !important;
+  max-height: 93px !important;
+  background-image: url('assets/shelfUI/shelf_filterBG.png');
+  background-size: cover;
+  background-position: center;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 8px 15px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: flex-start !important; /* 讓所有篩選元件從左側開始緊密排列 */
+}
+
+.filter-label {
+  color: #fcf5eb;
+  font-size: 20px;
+  font-family: 'sourcehan', sans-serif;
+  font-weight: 700;
+  min-width: 65px;
+  flex-shrink: 0;
+}
+
+/* 1. 第一行的搜尋輸入框：強制高度 28px，避免變高 */
+.search-input {
+  flex: 1 !important;
+  height: 28px !important;
+  max-height: 28px !important;
+  min-height: 28px !important;
+  background-color: #f7f3e8 !important;
+  border: 1px solid #b5a88f !important;
+  border-radius: 6px !important;
+  padding: 0 10px !important; /* 垂直改用 0，靠 line-height 或 flex 置中 */
+  line-height: 28px !important;
+  font-family: 'sourcehan', sans-serif !important;
+  font-size: 15px !important;
+  color: #4a4235 !important;
+  box-sizing: border-box !important;
+}
+
+/* 視圖切換按鈕固定在右上角 */
+.view-toggle-btn {
+  width: 115px;
+  height: 27px;
+  flex-shrink: 0;
+  border: none !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+  padding: 0;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* ==========================================================
+   2. 第二行篩選格：自訂寬度，並全面強制高度 28px
+   ========================================================== */
+.gender-select {
+  width: 130px !important;
+  flex-shrink: 0;
+}
+
+.progress-select {
+  width: 130px !important;
+  flex-shrink: 0;
+}
+
+/* 重新加入的狀態欄位 */
+.status-select {
+  width: 130px !important;
+  flex-shrink: 0;
+}
+
+/* 將標籤欄位適度縮小 */
+.tag-input {
+  width: 360px !important;
+  flex-shrink: 0;
+}
+
+.rating-select {
+  width: 130px !important;
+  flex-shrink: 0;
+}
+
+/* 清除按鈕樣式：讓它緊鄰確認按鈕左側，且不隨前面欄位擠壓 */
+.clear-filter-btn {
+  margin-left: auto !important; /* 讓清除鍵與確認鍵一起被推向最右側 */
+  background-image: url('assets/shelfUI/shelf_filterBTN_clear.png');
+  background-size: cover;
+  background-position: center;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  width: 55px;
+  height: 28px !important;
+  max-height: 28px !important;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-sizing: border-box !important;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* 確認按鈕靠右 */
+.confirm-filter-btn {
+  margin-left: 1px !important; /* 與清除按鈕保持固定間距 */
+  background-image: url('assets/shelfUI/shelf_filterBTN_confirm.png');
+  background-size: cover;
+  background-position: center;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  width: 55px;
+  height: 28px !important;
+  max-height: 28px !important;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-sizing: border-box !important;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+
+/* 下拉選單與標籤輸入框的強制高度設定 */
+.filter-select, .filter-input-box {
+  height: 28px !important;
+  max-height: 28px !important;
+  min-height: 28px !important;
+  background-color: #f7f3e8 !important;
+  border: 1px solid #b5a88f !important;
+  border-radius: 6px !important;
+  padding: 0 10px !important;
+  font-family: 'sourcehan', sans-serif !important;
+  font-size: 15px !important;
+  box-sizing: border-box !important;
+  /* 清除瀏覽器預設樣式 */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* 只在 select 加上精緻的自訂下拉箭頭 */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23494c29' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 5px center; 
+}
+
+/* 下拉選單提示字顏色處理 */
+.filter-select:has(option[value=""]:checked) {
+  color: #9c917d !important; /* 與 placeholder 相同的淺灰色 */
+}
+
+.filter-select {
+  color: #4a4235 !important;
+}
+.filter-select option {
+  color: #4a4235 !important;
+  background-color: #f7f3e8 !important;
+}
+
+/* 互動效果與其他樣式 */
+.search-input:focus, .filter-select:focus, .filter-input-box:focus {
+  outline: none !important;
+  border-color: #8c7d62 !important;
+  background-color: #fffaf0 !important;
+
+}
+
+.search-input::placeholder, .filter-input-box::placeholder {
+  color: #9c917d !important;
+  opacity: 1;
+}
+
+
+
+.view-toggle-btn.card-mode {
+  background-image: url('assets/shelfUI/shelf_filterBTN_cardview.png') !important;
+}
+.view-toggle-btn.table-mode {
+  background-image: url('assets/shelfUI/shelf_filterBTN_tableview.png') !important;
+}
+.view-toggle-btn:hover,
+.clear-filter-btn:hover,
+.confirm-filter-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.95;
+}
+
+.view-btn.active {
+  background-color: #333;
+  color: #fff;
+  font-weight: bold;
+}
+
+
+/* 右側包裝：上下疊放【方塊三】與【方塊四】 */
+.list-action-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 110px;
+  flex-shrink: 0;
+}
+
+/* 【方塊三】右上方數字計數框 */
+.count-badge {
+  background-image: url('assets/shelfUI/shelf_accountBG.png');
+  background-size: cover;
+  background-position: center;
+  border: none !important;
+  padding: 8px 10px;
+  font-family: 'sourcehan', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #75793d;
+  text-align: center;
+  border-radius: 0 !important;
+  box-sizing: border-box;
+  width: 112px;
+  height: 41px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 【方塊四】右下方新增按鈕區 */
+.add-item-btn {
+  background-image: url('assets/shelfUI/shelfBTN_addnew.png');
+  background-size: cover;
+  background-position: center;
+  border: none !important;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 0 !important;
+  box-sizing: border-box;
+  width: 111px;
+  height: 44px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-item-btn:hover {
+  background-color: #9ba17a;
+}
+
+/* ==========================================================
+   3. 下方書架容器與卡片尺寸調整 (無邊線、純色方塊、固定長方形 186x280px)
+   ========================================================== */
+
+
+/* 預設隱藏 */
+.card-grid-content, 
+.table-view-content {
+  display: none !important;
+}
+
+/* 當容器是 card-view 時，顯示卡片內容 */
+.book-shelf-container.card-view .card-grid-content {
+  display: grid !important;
+}
+
+/* 當容器是 table-view 時，顯示表格內容 */
+.book-shelf-container.table-view .table-view-content {
+  display: block !important;
+}
+
+/* 表格檢視容器：限制高度並允許內部獨立滾動 */
+.table-view-content {
+  max-height: 100.9%;       /* 或依你的版型需求設定 fixed 高度，如 100% */
+  overflow-y: auto;       /* 當內容超過高度時顯示捲軸 */
+  padding-right: 12px;
+  position: relative;     /* 確保黏性定位的邊界參照 */
+}
+
+/* 3. 下方書架容器與卡片樣式更新 */
+.book-shelf-container {
+  background-color: transparent !important; /* 改成透明，移除純色方塊 */
+  border: none !important;
+  border-radius: 0 !important;
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: scroll !important; /* 強制常駐顯示垂直捲軸 */
+  box-shadow: none !important;
+}
+
+
+/* 當切換為表格視圖時，強制關閉外層容器的大滾輪 */
+.book-shelf-container.table-view {
+  overflow-y: hidden !important;
+}
+
+/* 2. 自訂捲軸樣式 (可依需求調整顏色與寬度) */
+.book-shelf-container::-webkit-scrollbar,
+.table-view-content::-webkit-scrollbar {
+  width: 13px; /* 捲軸寬度 */
+}
+
+.book-shelf-container::-webkit-scrollbar-track,
+.table-view-content::-webkit-scrollbar-track {
+  background: #9f988786; /* 捲軸軌道背景 */
+  border-radius: 10px;
+}
+
+.book-shelf-container::-webkit-scrollbar-thumb ,
+.table-view-content::-webkit-scrollbar-thumb {
+  background: #8d9c75; /* 捲軸拉桿顏色 */
+  border-radius: 10px;
+}
+
+.book-shelf-container::-webkit-scrollbar-thumb:hover,
+.table-view-content::-webkit-scrollbar-thumb:hover {
+  background: #6e7a5b; /* 滑鼠懸停時顏色 */
+}
+
+/* 卡片視圖：一排 7 個固定網格 */
+.book-shelf-container.card-view .card-grid-content {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 15px;
+  justify-items: center; /* 確保內容整體居中 */
+  
+}
+
+/* 單張書籍卡片樣式：強制居中對齊 */
+.book-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 關鍵：圖片與文字在卡片內水平居中 */
+  gap: 5px;
+  box-sizing: border-box;
+  width: 150px; /* 與圖片同寬 */
+  margin-top: 25px;
+}
+
+/* 圖片方塊：固定尺寸 150px × 225px */
+.book-img-placeholder {
+  background-image: url('assets/detailUI/detail_nophoto.png');
+  background-size: cover;
+  border: none !important;
+  width: 150px;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent; 
+  border-radius: 0 !important;
+  flex-shrink: 0; /* 防止圖片被擠壓 */
+}
+
+/* 書名規範：置中 */
+.book-name {
+  color: #3d4121;
+  font-size: 18px;
+  font-family: 'sourcehan', sans-serif;
+  font-weight: 600;
+  text-align: center;
+
+  line-height: 1.3;               /* 設定固定行高 */
+  height: 2.6em;                  /* 強制固定總高度為 2 行 (1.3 * 2 = 2.6em) */
+  max-height: 2.6em;              
+  overflow: hidden;               /* 超過兩行的內容隱藏，不影響下排 */
+
+  word-break: break-all;
+  width: 100%;
+}
+
+/* 表格視圖詳細樣式 */
+.custom-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #42473a;
+  font-family: 'sourcehan', sans-serif ;
+  font-weight: 600;
+  table-layout: fixed; /* 建議加上此屬性，確保寬度設定不會被內容擠壓 */
+}
+
+.custom-data-table th, .custom-data-table td {
+  border: 1px solid #8d9c75;
+  padding: 4px 8px; /* 調整第一個數值（如 10px）即可改變列高/欄位高度 */
+  text-align: left;
+  vertical-align: middle; /* 確保內容垂直置中 */
+  overflow: hidden;
+  text-overflow: ellipsis; /* 內容過長時自動顯示省略號 ... */
+  white-space: nowrap;     /* 防止內容換行擠壓高度 */
+}
+
+.custom-data-table th {
+  background-color: #8d9c75;
+  color: #fff;
+  
+  /* === 新增：表頭固定頂部 === */
+  position: sticky;
+  top: 0;                 /* 緊貼容器頂部 */
+  z-index: 2;             /* 確保表頭層級高於下方滾動的資料列 */
+}
+
+/* 將性向 (第3欄)、進度 (第4欄)、日期 (第5欄)、評分 (第6欄) 的內容與表頭皆設為置中 */
+.custom-data-table th:nth-child(1), .custom-data-table th:nth-child(2),
+.custom-data-table th:nth-child(3), .custom-data-table td:nth-child(3),
+.custom-data-table th:nth-child(4), .custom-data-table td:nth-child(4),
+.custom-data-table th:nth-child(5), .custom-data-table td:nth-child(5),
+.custom-data-table th:nth-child(6), .custom-data-table td:nth-child(6),
+.custom-data-table th:nth-child(7) {
+  text-align: center !important;
+}
+
+.custom-data-table th {
+  background-color: #8d9c75;
+  color: #fff;
+}
+
+.custom-data-table td {
+  background-color: #f7f3e8;
+}
+
+/* ==========================================================
+   自訂各欄位寬度 (僅依四大大分類統一設定)
+   ========================================================== */
+
+/* 1. 小說 (所有細類：原創、綜英美、衍生、其他 統一套用) */
+[class*="page-novel-"] .custom-data-table th:nth-child(1) { width: 250px; } /* 書名 */
+[class*="page-novel-"] .custom-data-table th:nth-child(2) { width: 120px; } /* 作者 */
+[class*="page-novel-"] .custom-data-table th:nth-child(3) { width: 80px;  } /* 性向 */
+[class*="page-novel-"] .custom-data-table th:nth-child(4) { width: 80px;  } /* 進度 */
+[class*="page-novel-"] .custom-data-table th:nth-child(5) { width: 85px;  } /* 日期 */
+[class*="page-novel-"] .custom-data-table th:nth-child(6) { width: 80px;  } /* 評分 */
+[class*="page-novel-"] .custom-data-table th:nth-child(7) { width: auto;  } /* 標籤 */
+
+/* 2. 漫畫 (所有細類：韓漫、日漫、美漫、其他 統一套用) */
+[class*="page-comic-"] .custom-data-table th:nth-child(1) { width: 250px; } /* 漫畫名 */
+[class*="page-comic-"] .custom-data-table th:nth-child(2) { width: 150px; } /* 作者/繪者 */
+[class*="page-comic-"] .custom-data-table th:nth-child(3) { width: 80px;  } /* 性向 */
+[class*="page-comic-"] .custom-data-table th:nth-child(4) { width: 80px;  } /* 進度 */
+[class*="page-comic-"] .custom-data-table th:nth-child(5) { width: 85px;  } /* 日期 */
+[class*="page-comic-"] .custom-data-table th:nth-child(6) { width: 80px;  } /* 評分 */
+[class*="page-comic-"] .custom-data-table th:nth-child(7) { width: auto;  } /* 標籤 */
+
+/* 3. 影視 (所有細類：動畫、電影、影集、其他 統一套用) */
+[class*="page-video-"] .custom-data-table th:nth-child(1) { width: 220px; } /* 作品名 */
+[class*="page-video-"] .custom-data-table th:nth-child(2) { width: 100px; } /* 地區/類型 */
+[class*="page-video-"] .custom-data-table th:nth-child(3) { width: 80px;  } /* 進度 */
+[class*="page-video-"] .custom-data-table th:nth-child(4) { width: 90px;  } /* 狀態 */
+[class*="page-video-"] .custom-data-table th:nth-child(5) { width: 85px;  } /* 日期 */
+[class*="page-video-"] .custom-data-table th:nth-child(6) { width: 80px;  } /* 評分 */
+[class*="page-video-"] .custom-data-table th:nth-child(7) { width: auto;  } /* 標籤 */
+
+/* 4. 遊戲 (所有細類：實況、遊玩、解謎、其他 統一套用) */
+[class*="page-game-"] .custom-data-table th:nth-child(1) { width: 250px; } /* 遊戲名稱 */
+[class*="page-game-"] .custom-data-table th:nth-child(2) { width: 120px; } /* 類型/平台 */
+[class*="page-game-"] .custom-data-table th:nth-child(3) { width: 85px;  } /* 日期 */
+[class*="page-game-"] .custom-data-table th:nth-child(4) { width: 80px;  } /* 評分 */
+[class*="page-game-"] .custom-data-table th:nth-child(5) { width: auto;  } /* 標籤 */
+
+.tag-badge {
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-family: 'sourcehan', sans-serif ;
+  font-weight: 600;
+  font-size: 15px;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.custom-data-table tbody tr:hover td {
+  background-color: #e7e8d7 !important; /* 懸停時強調底色 */
+}
+
+/* 當滑鼠移上去時，往上浮起 */
+.list-title-box:hover,
+.list-filter-container:hover,
+.count-badge:hover,
+.add-item-btn:hover
+ {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 8px #8d886d;
+  z-index: 10;
+}
+
+/* ==========================================================
+   新增：書架篩選列標籤彈窗與輸入框額外樣式 (shelf.css)
+   ========================================================== */
+.tag-filter-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+#shelfTagPickerPanel {
+  width: 360px !important;
+  height: 300px !important;
+  background-color: #f7f3e8ee;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  display: none;
+  position: fixed;
+  z-index: 2500;
+}
+
+#shelfTagPickerPanel.active {
+  display: flex !important;
+  flex-direction: column;
+}
+
+/* 確保輸入框唯讀時滑鼠樣式明確 */
+.tag-input[readonly] {
+  background-color: #f7f3e8 !important;
+  color: #4a4235 !important;
+  cursor: pointer !important;
+}
+
+/* 2. 內部滾輪區域常駐與款式設定 */
+.tag-picker-scroll-area {
+  width: 100%;
+  height: 100%;
+  max-height: 270px;
+  overflow-y: scroll !important; /* 常駐滾輪 */
+  padding-right: 8px;
+  padding-top: 5px;
+  padding-left: 5px;
+  box-sizing: border-box;
+}
+
+/* 款式同其他區域之自訂捲軸 */
+.tag-picker-scroll-area::-webkit-scrollbar {
+  width: 10px;
+}
+
+.tag-picker-scroll-area::-webkit-scrollbar-track {
+  background: #c7beaa86;
+  border-radius: 10px;
+}
+
+.tag-picker-scroll-area::-webkit-scrollbar-thumb {
+  background: #8d9c75;
+  border-radius: 10px;
+}
+
+.tag-picker-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: #6e7a5b;
+}
+
+/* 標籤顆粒容器 */
+.tag-picker-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: flex-start;
+  font-family: 'sourcehan', sans-serif;
+}
+
+/* 可點擊選取的小標籤顆粒 */
+.picker-tag-item {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.8; /*未選中時半透明*/
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.picker-tag-item:hover {
+  transform: translateY(-2px);
+  opacity: 1;
+}
+
+/* 被選中時的高亮樣式 */
+.picker-tag-item.selected {
+  opacity: 1 !important;
+  box-shadow: 0 0 0 1px #fff, 0 3px 6px rgba(0,0,0,0.3);
+  transform: scale(1.05);
+}
+
+/* 底部按鈕區 */
+.tag-picker-bottom-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 5px;
+}
+
+.tag-picker-right-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.tag-picker-btn {
+  width: 50px;
+  height: 25px;
+  border: none;
+  cursor: pointer;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+}
+
+/* 按鈕底圖 (可依實際圖片路徑替換) */
+.tag-btn-cancel {
+  background-image: url('assets/shelfUI/shelf_filterBTN_clear.png');
+}
+
+.tag-btn-confirm {
+  background-image: url('assets/shelfUI/shelf_filterBTN_confirm.png');
+}
+
+/* 綜英美專用標題圖片 */
+.list-title-box.title-novel-crossover {
+  background-image: url('assets/shelfUI/shelf_title_novel02.png') !important;
+}
+.list-title-box.title-novel-derivative {
+  background-image: url('assets/shelfUI/shelf_title_novel03.png') !important;
+}
+.list-title-box.title-novel-other {
+  background-image: url('assets/shelfUI/shelf_title_novel04.png') !important;
+}
+
+.list-title-box.title-comic {
+  background-image: url('assets/shelfUI/shelf_title_comic.png') !important;
+}
+
